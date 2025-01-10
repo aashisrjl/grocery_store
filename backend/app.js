@@ -17,6 +17,9 @@ app.get('/', (req, res) => {
     }
 );
 
+const authRoute = require("./routes/authRoute.js")
+app.use("/",authRoute)
+
 app.listen(port, () => {
     console.log(`SERVER listening at ${port}`);
     }
