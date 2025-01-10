@@ -1,12 +1,15 @@
+
+const { category } = require("../models");
+
 const categoryData = [
     {
-        categoryName:""
+        name:"1"
     },
     {
-        categoryname: ""
+        name: "2"
     },
     {
-        categoryName: ""
+        name: "3"
     }
 ]
 exports.categorySeeder = async(req,res)=>{
@@ -17,7 +20,8 @@ exports.categorySeeder = async(req,res)=>{
             return
         }
         //categoryData to category
-        
+        await category.bulkCreate(categoryData);
+        console.log("category seeded successfully");
 
         
     } catch (error) {

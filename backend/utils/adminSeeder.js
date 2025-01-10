@@ -7,11 +7,12 @@ exports.adminSeeder = async(req,res)=>{
     })
     if(adminAlreadyExit){
        console.log("admin seeded already");
+       return;
         }
     const admin = await users.create({
         username: process.env.ADMIN_USERNAME,
-        email: bcrypt.hashSync(process.env.ADMIN_EMAIL,8),
-        password: process.env.ADMIN_PASSWORD,
+        email: process.env.ADMIN_EMAIL,
+        password: bcrypt.hashSync(process.env.ADMIN_PASSWORD,8),
         role: "admin" 
     });
     console.log("admin seeded successfully");

@@ -11,14 +11,23 @@ app.use(express.json());
 //database connection
 require('./models/index.js');
 
-
 app.get('/', (req, res) => {
     res.send('Hello World!');
     }
 );
 
-const authRoute = require("./routes/authRoute.js")
+//admin seeder
+const { adminSeeder } = require("./utils/adminSeeder.js");
+adminSeeder();
+
+//category seeder
+const { categorySeeder } = require("./utils/categorySeeder.js");
+categorySeeder()
+
+const authRoute = require("./routes/authRoute.js");
+
 app.use("/",authRoute)
+
 
 app.listen(port, () => {
     console.log(`SERVER listening at ${port}`);
