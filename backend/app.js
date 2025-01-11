@@ -26,9 +26,11 @@ categorySeeder()
 
 const authRoute = require("./routes/authRoute.js");
 const categoryRoute = require("./routes/categoryRoute.js");
+const productRoute = require("./routes/productRoute.js");
 
 app.use("/",authRoute)
 app.use("/",categoryRoute)
+app.use("/",productRoute)
 
 
 app.listen(port, () => {

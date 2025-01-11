@@ -31,13 +31,22 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // importing model files 
-// db.blogs = require("./blogModel.js")(sequelize, DataTypes);
 db.users = require("./userModel.js")(sequelize, DataTypes);
 db.category = require("./categoryModel.js")(sequelize, DataTypes);
 db.product = require("./productModel.js")(sequelize, DataTypes);
-// db.blogs = require("./blogModel.js")(sequelize,DataTypes);
-// db.questions = require("./questionModel.js")(sequelize,DataTypes);
-// db.answers = require("./answerModel.js")(sequelize,DataTypes);
+
+//connections
+
+// User and Product association
+db.users.hasMany(db.product, { foreignKey: 'userId' });
+db.product.belongsTo(db.users, { foreignKey: 'userId' });
+
+// Category and Product association
+db.category.hasOne(db.product, { foreignKey: 'categoryId', as: 'CategoryDetails' });
+db.product.belongsTo(db.category, { foreignKey: 'categoryId', as: 'CategoryDetails' });
+
+ 
+
 
 // db.users.hasMany(db.questions)
 // db.questions.belongsTo(db.users)

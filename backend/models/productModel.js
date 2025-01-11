@@ -16,17 +16,26 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        unit:{
+            type: DataTypes.STRING,
+            allowNull: false,
+
+        },
+        category: {
+            type: DataTypes.STRING
+            },
         stock: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
         rating: {
             type: DataTypes.DECIMAL,
-            allowNull: false,
+            min: 0,
+            max: 5
+
         },
         reviews: {
             type: DataTypes.INTEGER,
-            allowNull: false,
         },
     });
     return Product;
