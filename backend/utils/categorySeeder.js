@@ -3,13 +3,16 @@ const { category } = require("../models");
 
 const categoryData = [
     {
-        name:"1"
+        categoryName:"Fruits & Vegetables"
     },
     {
-        name: "2"
+        categoryName: "Dairy & Eggs"
     },
     {
-        name: "3"
+        categoryName: "Kitchen Essentials"
+    },
+    {
+        categoryName:"Bakery"
     }
 ]
 exports.categorySeeder = async(req,res)=>{
