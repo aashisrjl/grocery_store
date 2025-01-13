@@ -37,6 +37,7 @@ categorySeeder()
 const authRoute = require("./routes/authRoute.js");
 const categoryRoute = require("./routes/categoryRoute.js");
 const productRoute = require("./routes/productRoute.js");
+const cartRoute = require("./routes/cartRoute.js");
 const { users } = require("./models/index.js");
 
 // serialize and deserialize user
@@ -50,6 +51,8 @@ passport.deserializeUser((id, cb) => {
 app.use("/",authRoute)
 app.use("/",categoryRoute)
 app.use("/",productRoute)
+app.use("/",cartRoute)
+
 
 //google authentication google strategy
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
