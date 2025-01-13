@@ -1,4 +1,6 @@
+const { product, users, cart } = require("../models")
 
+//add to cart by user
 exports.addToCart = async(req,res)=>{
     const userId = req?.userId
     const {quantity ,productId} = req.body
@@ -32,4 +34,32 @@ exports.addToCart = async(req,res)=>{
     })
    }
 
+}
+
+
+//get cart od that user
+exports.getCartItem = async(req,res)=>{
+    const userId = req?.userId
+    const cartItem = await cart.findAll({
+        where:{
+            userId
+        },
+        include:[{
+            model:product,
+            as:"productDetails"
+        },
+        {
+            model:users,
+            as:"userDetails"
+        }]
+    })
+    res.status(200).json({
+        data:cartItem
+    })
+
+    if(!cartItem){
+        return res.status(400).json({
+            message:"No items in the cart for this user"
+        })
+    }
 }
