@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.SERVER_PORT || 3000;
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
-const session = require("express-session");
+// const session = require("express-session");
 const jwt = require("jsonwebtoken");
 
 
@@ -16,6 +16,13 @@ app.use(passport.initialize());
 
 //database connection
 require('./models/index.js');
+//admin seeder
+const { adminSeeder } = require("./utils/adminSeeder.js");
+adminSeeder();
+//category seeder
+const { categorySeeder } = require("./utils/categorySeeder.js");
+categorySeeder();
+const { users } = require("./models/index.js");
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -26,19 +33,12 @@ app.get('/about', (req, res) => {
     }
 );
 
-//admin seeder
-const { adminSeeder } = require("./utils/adminSeeder.js");
-adminSeeder();
-
-//category seeder
-const { categorySeeder } = require("./utils/categorySeeder.js");
-categorySeeder()
 
 const authRoute = require("./routes/authRoute.js");
 const categoryRoute = require("./routes/categoryRoute.js");
 const productRoute = require("./routes/productRoute.js");
 const cartRoute = require("./routes/cartRoute.js");
-const { users } = require("./models/index.js");
+
 
 // serialize and deserialize user
 passport.serializeUser((user, cb) => {

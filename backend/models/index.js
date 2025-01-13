@@ -35,6 +35,9 @@ db.users = require("./userModel.js")(sequelize, DataTypes);
 db.category = require("./categoryModel.js")(sequelize, DataTypes);
 db.product = require("./productModel.js")(sequelize, DataTypes);
 db.cart = require("./cartModel.js")(sequelize, DataTypes);
+db.order = require("./orderModel.js")(sequelize, DataTypes);
+db.orderDetails = require("./orderDetailModel.js")(sequelize, DataTypes);
+db.payment = require("./paymentModel.js")(sequelize, DataTypes);
 
 //connections
 
@@ -52,6 +55,23 @@ db.cart.belongsTo(db.users, { foreignKey: 'userId' });
 // Cart and Product association
 db.product.hasMany(db.cart, { foreignKey: 'productId' });
 db.cart.belongsTo(db.product, { foreignKey: 'productId' });
+
+// //order and order details
+db.order.hasMany(db.orderDetails)
+db.orderDetails.belongsTo(db.order)
+
+//orderDetail and Product
+db.product.hasMany(db.orderDetails)
+db.orderDetails.belongsTo(db.product)
+
+//order and payment
+db.payment.hasOne(db.order)
+db.order.belongsTo(db.payment)
+
+//user and order
+db.users.hasMany(db.order)
+db.order.belongsTo(db.users)
+
 
  
 
