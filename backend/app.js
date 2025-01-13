@@ -104,73 +104,53 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 // Facebook login authentication
 const FacebookStrategy = require("passport-facebook").Strategy;
-
-// Configure the Facebook Strategy
-passport.use(
-    new FacebookStrategy(
-        {
+passport.use(new FacebookStrategy({
             clientID: process.env.F_CLIENT_ID,
             clientSecret: process.env.F_CLIENT_SECRET,
             callbackURL: process.env.F_CALLBACK_URL,
-            profileFields: ['id', 'displayName', 'email', 'photos'], // Correct fields
+            profileFields: ['id', 'displayName', 'email', 'photos'], 
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                return done(null, profile); // Pass the profile to the callback
+                return done(null, profile); 
             } catch (err) {
-                return done(err, null); // Handle errors gracefully
+                return done(err, null); 
             }
         }
     )
 );
+// Routes
+app.get('/auth/facebook',passport.authenticate('facebook', {
+        scope: ['email'], session: false, 
+    }));
 
-// Routes for Facebook Authentication
-app.get(
-    '/auth/facebook',
-    passport.authenticate('facebook', {
-        scope: ['email'], // Request email permission
-        session: false,  // Disable session
-    })
-);
-
-app.get(
-    '/auth/facebook/callback',
-    passport.authenticate('facebook', {
-        failureRedirect: '/login', // Redirect on failure
-        session: false, // Disable session
-    }),
-    async (req, res) => {
+app.get('/auth/facebook/callback',passport.authenticate('facebook', {
+        failureRedirect: '/login',session: false, 
+    }),async (req, res) => {
         try {
-            // Check if user exists in the database
             const user = await users.findOne({
                 where: {
-                    email: req.user.emails[0].value, // Access email from `req.user`
+                    email: req.user.emails[0].value, 
                 },
             });
-
             let token;
-
             if (user) {
-                // User exists, generate a token
-                token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+                    token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
                     expiresIn: process.env.JWT_EXPIRES_IN,
                 });
             } else {
-                // Create a new user
+                // new user
                 const newUser = await users.create({
                     username: req.user.displayName,
                     email: req.user.emails[0].value,
-                    password: Math.random().toString(36).substring(2, 10), // Generate random password
+                    password: Math.random().toString(36).substring(2, 10), 
                     facebookId: req.user.id,
-                    imgUrl: req.user.photos[0].value, // Profile picture
+                    imgUrl: req.user.photos[0].value, 
                 });
-
                 token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
                     expiresIn: process.env.JWT_EXPIRES_IN,
                 });
             }
-
-            // Set token as a cookie and redirect
             res.cookie('token', token);
             res.redirect('http://localhost:3000/about'); // Redirect to the desired page
         } catch (error) {
