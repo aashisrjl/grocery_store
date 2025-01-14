@@ -1,4 +1,4 @@
-const { product, users, cart } = require("../models")
+const { product, users, cart, category } = require("../models")
 
 
 //add to cart by user
@@ -47,17 +47,21 @@ exports.getCartItem = async(req,res)=>{
         },
         include:[{
             model:product,
-            as:"productDetails"
+            include:[{
+                model:category,
+                as:"CategoryDetails",
+                attributes:["categoryName"]
+            }]
         },
         {
             model:users,
-            as:"userDetails"
+            attributes:["username","email","role","imgUrl"]
         },
-    {
-        model: category,
-        as:"categoryDetails",
-        attributes:["categoryName"]
-    }]
+    // {
+    //     model: category,
+    //     attributes:["categoryName"]
+    // }
+    ]
     })
     res.status(200).json({
         data:cartItem
@@ -73,11 +77,27 @@ exports.getCartItem = async(req,res)=>{
 //delete cart item
 exports.deleteCart = async(req,res)=>{
     const userId = req?.userId
-    const productId = req.params.productId
-    const product = await product.findByPk(productId);
-    if(!product){
+    const productId = req.params.id
+    const products = await product.findOne({
+        where:{
+            id: productId
+        }
+    })
+
+    if(!products){
         return res.status(400).json({
-            message:"No product found"
+            message:"No product found with this id"
+        })
+    }
+    const cartProduct = await cart.findOne({
+        where:{
+            userId:userId,
+            productId:productId
+        }
+    })
+    if(!cartProduct){
+        return res.status(400).json({
+            message:"No product found in the cart"
         })
     }
     await cart.destroy({
@@ -95,11 +115,15 @@ exports.deleteCart = async(req,res)=>{
 
 exports.updateCart = async(req,res)=>{
     const userId = req?.userId
-    const productId = req.params.productId
+    const productId = req.params.id
     const {quantity} = req.body
-    const product = await product.findByPk(productId);
+    const products = await product.findOne({
+        where:{
+            id:productId
+        }
+    });
 
-    if(!product){
+    if(!products){
         return res.status(400).json({
             message:"No product found"
         })
