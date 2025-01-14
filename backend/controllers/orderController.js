@@ -1,5 +1,5 @@
 const { default: axios } = require("axios");
-const { orderDetails, payment, order } = require("../models");
+const { orderDetails, payment, order, users } = require("../models");
 
 exports.createOrder = async(req,res)=>{
     const userId = req?.userId
@@ -39,6 +39,7 @@ exports.createOrder = async(req,res)=>{
             message:"Order create unsuccessfull"
         })
     }
+    const userData = await users.findByPk(userId);
 
     if(paymentMethod === 'khalti'){
         const data ={
@@ -49,9 +50,9 @@ exports.createOrder = async(req,res)=>{
             website_url: "http://localhost:3000",
             purchase_order_name: "orderName_"+ OrderData.id,
             customer_info:{
-                name: "Aashish Rijal",
-                email: "aashisrijal252@gmail.com",
-                phone: "9841824710"
+                name: userData.username,
+                email: userData.email,
+                phone: userData?.phone 
             }
         }
 
@@ -74,15 +75,20 @@ exports.createOrder = async(req,res)=>{
 
     if (paymentMethod === 'esewa') {
         const data = {
-            amt: totalAmount, // The total amount for the order
-            psc: 0, // Additional charge, if applicable
-            pdc: 0, // Delivery charge, if applicable
-            txAmt: 0, // Tax amount
-            tAmt: totalAmount, // Total transaction amount (should equal `amt + psc + pdc + txAmt`)
-            pid: "order_" + OrderData.id, // Unique product/order ID
-            scd: "EPAYTEST", // Merchant Code provided by eSewa (use "EPAYTEST" for testing)
-            su: "http://localhost:3000/success", // Success URL
-            fu: "http://localhost:3000/failure" // Failure URL
+            amt: totalAmount, 
+            psc: 0, 
+            pdc: 0, 
+            txAmt: 0, 
+            tAmt: totalAmount, 
+            pid: "order_" + OrderData.id, 
+            scd: "EPAYTEST", 
+            su: "http://localhost:3000/success", 
+            fu: "http://localhost:3000/failure",
+            //userinfo
+            cusid: userData.id,
+            cusname: userData.username,
+            cusemail: userData.email,
+            cusphone: userData?.phone
         };
     
         const esewaUrl = "https://uat.esewa.com.np/epay/main";
@@ -102,7 +108,19 @@ exports.createOrder = async(req,res)=>{
     
 }
 
-exports.verifyPayment = async(req,res)=>{
+// verify esewa using refid
+exports.verifyEsewaPayment = async(req,res)=>{
+    const refId = req.query.refId;
+    const orderData = await payment.findOne({where:{pidx:refId}});
+    if(!orderData){
+    return res.status(404).json({
+        message: "Order not found"
+    })
+}
+
+}
+
+exports.verifyKhaltiPayment = async(req,res)=>{
     const {pidx} = req.body
     const userId = req?.userId
     if(!pidx){
