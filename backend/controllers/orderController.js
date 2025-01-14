@@ -66,14 +66,40 @@ exports.createOrder = async(req,res)=>{
         paymentData.save();
         res.status(200).json({
             message: "order placed successs by khalti",
-            url: khaltiResponse.payment_url
+            url: khaltiResponse.payment_url,
+            pidx: khaltiResponse.pidx
         })
 
     }
 
-    if(paymentMethod === 'esewa'){
-
+    if (paymentMethod === 'esewa') {
+        const data = {
+            amt: totalAmount, // The total amount for the order
+            psc: 0, // Additional charge, if applicable
+            pdc: 0, // Delivery charge, if applicable
+            txAmt: 0, // Tax amount
+            tAmt: totalAmount, // Total transaction amount (should equal `amt + psc + pdc + txAmt`)
+            pid: "order_" + OrderData.id, // Unique product/order ID
+            scd: "EPAYTEST", // Merchant Code provided by eSewa (use "EPAYTEST" for testing)
+            su: "http://localhost:3000/success", // Success URL
+            fu: "http://localhost:3000/failure" // Failure URL
+        };
+    
+        const esewaUrl = "https://uat.esewa.com.np/epay/main";
+    
+        // Constructing a query string from the data object
+        const queryString = Object.keys(data)
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+            .join("&");
+    
+        const paymentUrl = `${esewaUrl}?${queryString}`;
+    
+        res.status(200).json({
+            message: "Order placed successfully with eSewa",
+            url: paymentUrl
+        });
     }
+    
 }
 
 exports.verifyPayment = async(req,res)=>{
