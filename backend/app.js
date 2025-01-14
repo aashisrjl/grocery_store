@@ -38,6 +38,8 @@ const authRoute = require("./routes/authRoute.js");
 const categoryRoute = require("./routes/categoryRoute.js");
 const productRoute = require("./routes/productRoute.js");
 const cartRoute = require("./routes/cartRoute.js");
+const orderRoute = require("./routes/orderRoute.js");
+
 
 
 // serialize and deserialize user
@@ -52,6 +54,7 @@ app.use("/",authRoute)
 app.use("/",categoryRoute)
 app.use("/",productRoute)
 app.use("/",cartRoute)
+app.use("/",orderRoute)
 
 
 //google authentication google strategy

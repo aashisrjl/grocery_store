@@ -3,17 +3,14 @@ const { orderDetails, payment, order } = require("../models");
 
 exports.createOrder = async(req,res)=>{
     const userId = req?.userId
-     const {phoneNumber,shippingAddress,totalAmount,orderStatus,paymentMethod,items} = req.body
+     const {phoneNumber,shippingAddress,totalAmount,paymentMethod,items} = req.body
 
-    const products = await product.findOne({
-        where:{
-            id:productId
-        }
-    });
+   if(!phoneNumber || !shippingAddress || !totalAmount || !paymentMethod || !items){
+    return res.status(400).json({
+        message: "all fields are required"
+    })
+   }
 
-    if(!products){
-        return res.status(404).json({message:"Product not found"})
-    }
 
     const paymentData = await payment.create({
         paymentMethod
@@ -43,8 +40,34 @@ exports.createOrder = async(req,res)=>{
         })
     }
 
-
     if(paymentMethod === 'khalti'){
+        const data ={
+            return_url: "http://localhost:3000/success",
+            cancel_url: "http://localhost:3000/cancel",
+            purchase_order_id: OrderData.id,
+            amount: totalAmount *100,
+            website_url: "http://localhost:3000",
+            purchase_order_name: "orderName_"+ OrderData.id,
+            customer_info:{
+                name: "Aashish Rijal",
+                email: "aashisrijal252@gmail.com",
+                phone: "9841824710"
+            }
+        }
+
+        const response = await axios.post("https://dev.khalti.com/api/v2/epayment/initiate/",data,{
+            headers:{
+                "Authorization": "key dbae3da99710442a83d9068ff967b2ed",
+                "Content-Type": "application/json"
+            }
+        })
+        const khaltiResponse = response.data
+        paymentData.pidx = khaltiResponse.pidx
+        paymentData.save();
+        res.status(200).json({
+            message: "order placed successs by khalti",
+            url: khaltiResponse.payment_url
+        })
 
     }
 
@@ -54,7 +77,6 @@ exports.createOrder = async(req,res)=>{
 }
 
 exports.verifyPayment = async(req,res)=>{
-
     const {pidx} = req.body
     const userId = req?.userId
     if(!pidx){
@@ -62,14 +84,15 @@ exports.verifyPayment = async(req,res)=>{
             message:"Payment id is required"
         })
     }
-    const response = axios.post('khalti url',{pidx},{
+    const response = axios.post('https://dev.khalti.com/api/v2/epayment/lookup/',{pidx},{
         headers:{
-            "Authorization": "key yourkhaltikey"
+            "Authorization": "key dbae3da99710442a83d9068ff967b2ed",
+            "Content-Type": "application/json"
         }
     })
 
     const data = response.data
-    if(data.status === 'complete'){
+    if(data.status === 'completed'){
         await payment.update({
             paymentStatus: "paid"
         },{
@@ -86,3 +109,4 @@ exports.verifyPayment = async(req,res)=>{
         })
     }
 }
+
