@@ -38,6 +38,7 @@ db.cart = require("./cartModel.js")(sequelize, DataTypes);
 db.order = require("./orderModel.js")(sequelize, DataTypes);
 db.orderDetails = require("./orderDetailModel.js")(sequelize, DataTypes);
 db.payment = require("./paymentModel.js")(sequelize, DataTypes);
+db.credit = require("./creditModel.js")(sequelize, DataTypes);
 
 //connections
 
