@@ -24,48 +24,6 @@ const { categorySeeder } = require("./utils/categorySeeder.js");
 categorySeeder();
 const { users } = require("./models/index.js");
 
-app.get('/success', async (req, res) => {
-    try {
-        // Extract the refId and order ID from query parameters
-        const refId = req.query.refId;
-        const orderId = req.query.oid;
-
-        // Ensure refId and orderId are provided
-        if (!refId || !orderId) {
-            return res.status(400).json({
-                message: "Missing required query parameters",
-                required: ["refId", "oid"]
-            });
-        }
-
-        // Update the payment status and pidx in the database
-        await payment.update(
-            {
-                paymentStatus: 'paid',
-                pidx: refId
-            },
-            {
-                where: {
-                    id: orderId
-                }
-            }
-        );
-
-        // Respond with success
-        res.json({
-            message: "Payment successful",
-            refId: refId
-        });
-    } catch (error) {
-        // Handle errors gracefully
-        res.status(500).json({
-            message: "Error processing payment success",
-            error: error.message
-        });
-    }
-});
-
-
 app.get('/about', (req, res) => {
     res.send('logged in!');
     }
@@ -77,6 +35,8 @@ const categoryRoute = require("./routes/categoryRoute.js");
 const productRoute = require("./routes/productRoute.js");
 const cartRoute = require("./routes/cartRoute.js");
 const orderRoute = require("./routes/orderRoute.js");
+const creditRoute = require("./routes/creditRoute.js");
+
 
 
 
@@ -93,6 +53,7 @@ app.use("/",categoryRoute)
 app.use("/",productRoute)
 app.use("/",cartRoute)
 app.use("/",orderRoute)
+app.use("/",creditRoute)
 
 
 //google authentication google strategy

@@ -1,3 +1,5 @@
+const { credit } = require("../models");
+
 exports.addCredit = async(req,res)=>{
     const {productId,productName,username,email,phone,address} = req.body
     let creditData = {};
@@ -49,7 +51,7 @@ exports.deleteCredit = async(req,res)=>{
     const data = await credit.findByPk(creditId);
     if(!data){
         return res.status(400).json({
-            messsage: "credit record not found"
+            message: "credit record not found"
         })
     }
     await credit.destroy({
@@ -62,3 +64,60 @@ exports.deleteCredit = async(req,res)=>{
     })
 }
  
+// Update credit details
+exports.updateCredit = async (req, res) => {
+        const creditId = req.params.id;
+        const updateData = req.body;   
+
+        const creditRecord = await credit.findByPk(creditId);
+        if (!creditRecord) {
+            return res.status(404).json({
+                message: "Credit record not found",
+            });
+        }
+
+        await creditRecord.update(updateData);
+
+        res.status(200).json({
+            message: "Credit record updated successfully",
+            credit: creditRecord,
+        });
+}
+
+//getproduct which are unpaid
+exports.unpaidCredit = async(req,res)=>{
+    const data = await credit.findAll({
+        where:{
+            isPaid: "unpaid"
+        }
+    })
+    if(data.length == 0){
+        res.status(400).json({
+            message: "record can't find"
+        })
+    }
+    res.status(200).json({
+        message: "unpaid credit records finds",
+        data
+    })
+}
+
+//getproduct which are paid
+exports.paidCredit = async(req,res)=>{
+    const data = await credit.findAll({
+        where:{
+            isPaid: "paid"
+        }
+    })
+    if(data.length == 0){
+        res.status(400).json({
+            message: "record can't find"
+        })
+    }
+    res.status(200).json({
+        message: "paid credit records finds",
+        data
+    })
+}
+    
+    

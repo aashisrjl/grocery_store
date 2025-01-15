@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM('pending', 'approved', 'rejected'),
             defaultValue: 'pending',
         },
+        isPaid:{
+            type: DataTypes.ENUM('paid','unpaid'),
+            defaultValue: 'unpaid'
+        }
     });
 
     return Credit;
