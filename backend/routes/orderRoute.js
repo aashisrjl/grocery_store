@@ -24,7 +24,7 @@ router.route("/order-cancel/:id")
 router.route("/order-status/:id")
 .patch(isAuthenticated,allowedTo('admin'),errorHandler(changeOrderStatus))
 
-router.route("order-payment/:id")
+router.route("/order-payment/:id")
 .patch(isAuthenticated,allowedTo('admin'),errorHandler(changePaymentStatus))
 
 router.route("/order/:id")

@@ -172,7 +172,7 @@ exports.verifyEsewaPayment = async (req, res) => {
 
 ////////////////////////////////////verify khalti payment
 exports.verifyKhaltiPayment = async(req,res)=>{
-    const {pidx} = req.body
+    const {pidx} = req.query
     const userId = req?.userId
     if(!pidx){
         return res.status(400).json({
@@ -217,7 +217,7 @@ exports.getOrder = async(req,res)=>{
         include:[
             {
                 model: users,
-                attributes: ["username","email","phone"]
+                attributes: ["username","email","role"]
             },
             {
              model: payment,
@@ -336,10 +336,15 @@ exports.deleteOrder = async(req,res)=>{
             message: "can't find the order with that id"
         })
      }
+     await orderDetails.destroy({
+        where:{
+            orderId: orderData.id
+        }
+     })
 
      await order.destroy({
         where:{
-            id: orderId
+            id: orderData.id
         }
      })
 
@@ -349,11 +354,7 @@ exports.deleteOrder = async(req,res)=>{
         }
      })
 
-     await orderDetails.destroy({
-        where:{
-            orderId
-        }
-     })
+     
 
      res.status(200).json({
         message: "order deleted successfully"
