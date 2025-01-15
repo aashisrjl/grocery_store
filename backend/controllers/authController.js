@@ -69,6 +69,75 @@ exports.handleLogin = async (req, res) => {
             })
 
 }
+ 
+
+// Google callback handler
+exports.googleCallback = async (req, res) => {
+        const userProfile = req.user; 
+        const user = await users.findOne({
+            where: { email: userProfile.emails[0].value },
+        });
+
+        let token;
+        if (user) {
+            // Existing user
+            token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_EXPIRES_IN,
+            });
+        } else {
+            // New user
+            const newUser = await users.create({
+                username: userProfile.displayName,
+                email: userProfile.emails[0].value,
+                password: Math.random().toString(36).substring(2, 10),
+                googleId: userProfile.id,
+                imgUrl: userProfile.photos[0].value,
+            });
+
+            token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_EXPIRES_IN,
+            });
+        }
+
+        res.cookie('token', token);
+        res.redirect('http://localhost:3000/about');
+   
+};
+
+// Facebook callback handler
+exports.facebookCallback = async (req, res) => {
+        const userProfile = req.user;
+        const user = await users.findOne({
+            where: { email: userProfile.emails[0].value },
+        });
+
+        let token;
+        if (user) {
+            // Existing user
+            token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_EXPIRES_IN,
+            });
+        } else {
+            // New user
+            const newUser = await users.create({
+                username: userProfile.displayName,
+                email: userProfile.emails[0].value,
+                password: Math.random().toString(36).substring(2, 10),
+                facebookId: userProfile.id,
+                imgUrl: userProfile.photos[0].value,
+            });
+
+            token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_EXPIRES_IN,
+            });
+        }
+
+        res.cookie('token', token);
+        res.redirect('http://localhost:3000/about');
+    
+};
+
+
 exports.handleLogout= async(req,res)=>{
     res.clearCookie("token");
     res.status(200).json({
