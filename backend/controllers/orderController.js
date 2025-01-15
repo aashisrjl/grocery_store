@@ -10,7 +10,7 @@ exports.createOrder = async(req,res)=>{
         message: "all fields are required"
     })
    }
-
+   const userData = await users.findByPk(userId);
 
     const paymentData = await payment.create({
         paymentMethod
@@ -39,12 +39,15 @@ exports.createOrder = async(req,res)=>{
             message:"Order create unsuccessfull"
         })
     }
-    const userData = await users.findByPk(userId);
+    res.status(200).json({
+        message: "order created with cod"
+    })
+
 
     if(paymentMethod === 'khalti'){
         const data ={
-            return_url: "http://localhost:3000/success",
-            cancel_url: "http://localhost:3000/cancel",
+            return_url: "http://localhost:3000/success-khalti",
+            cancel_url: "http://localhost:3000/cancel-khalti",
             purchase_order_id: OrderData.id,
             amount: totalAmount *100,
             website_url: "http://localhost:3000",
@@ -82,8 +85,8 @@ exports.createOrder = async(req,res)=>{
             tAmt: totalAmount, 
             pid: "order_" + OrderData.id, 
             scd: "EPAYTEST", 
-            su: "http://localhost:3000/success", 
-            fu: "http://localhost:3000/failure",
+            su: "http://localhost:3000/success-esewa", 
+            fu: "http://localhost:3000/failure-esewa",
             //userinfo
             cusid: userData.id,
             cusname: userData.username,
@@ -109,17 +112,65 @@ exports.createOrder = async(req,res)=>{
 }
 
 // verify esewa using refid
-exports.verifyEsewaPayment = async(req,res)=>{
-    const refId = req.query.refId;
-    const orderData = await payment.findOne({where:{pidx:refId}});
-    if(!orderData){
-    return res.status(404).json({
-        message: "Order not found"
-    })
-}
 
-}
+exports.verifyEsewaPayment = async (req, res) => {
+        const { refId, oid, amt } = req.query;
 
+        if (!refId || !oid || !amt) {
+            return res.status(400).json({
+                message: "Invalid request. Missing required parameters."
+            });
+        }
+
+        // Verification data for eSewa
+        const verificationData = {
+            amt: amt,
+            rid: refId, 
+            pid: oid,  
+            scd: "EPAYTEST"
+        };
+
+        // Send verification request to eSewa
+        const response = await axios.post(
+            "https://uat.esewa.com.np/epay/transrec",
+            null,
+            {
+                params: verificationData,
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            }
+        );
+
+        const esewaResponse = response.data;
+        console.log(response.data)
+
+        if (esewaResponse.includes("<response_code>Success</response_code>")) {
+            // Update the payment status and store the refId as pidx in the database
+            const updateResult = await payment.update(
+                { paymentStatus: "paid", pidx: refId }, 
+                { where: { id: oid } } // Match the order ID
+            );
+
+            if (updateResult[0] === 0) {
+                return res.status(404).json({
+                    message: "Order not found or already updated."
+                });
+            }
+
+            return res.status(200).json({
+                message: "Payment verified successfully",
+                status: "paid",
+                refId: refId
+            });
+        } else {
+            return res.status(400).json({
+                message: "Payment verification failed",
+                response: esewaResponse
+            });
+        }
+};
+
+
+////////////////////////////////////verify khalti payment
 exports.verifyKhaltiPayment = async(req,res)=>{
     const {pidx} = req.body
     const userId = req?.userId
@@ -144,6 +195,7 @@ exports.verifyKhaltiPayment = async(req,res)=>{
                 pidx
             }
         })
+
         res.status(200).json({
             message: "payment verified"
         })
@@ -152,5 +204,159 @@ exports.verifyKhaltiPayment = async(req,res)=>{
             message: "payment not verified"
         })
     }
+}
+
+
+//get order of a user 
+exports.getOrder = async(req,res)=>{
+    const userId = req?.userId
+    const orders = await order.findAll({
+        where:{
+            userId
+        },
+        include:[
+            {
+                model: users,
+                attributes: ["username","email","phone"]
+            },
+            {
+             model: payment,
+             attributes:["paymentMethod","paymentStatus"]   
+            }
+        ]
+    })
+    if(orders.length == 0){
+        return res.status(404).json({
+            message: "No orders found"
+            })
+    }
+
+    res.status(200).json({
+        message: "orders found",
+        orders
+    })
+}
+
+
+//cancel order by user
+exports.cancelOrder = async(req,res)=>{
+    const userId = req?.userId
+    const orderId = req.params.id
+    const orderData = await order.findAll({
+        where:{
+            id: orderId,
+            userId
+        }
+    })
+    if(orderData?.orderStatus === 'ontheway'  || orderData?.orderStatus === 'preparation' ){
+        return res.status(400).json({
+            message: "Order is already in progress, cannot cancel"
+            })
+    }
+    await order.update({
+        orderStatus: 'cancelled'
+    },{
+        where:{
+            id: orderId
+        }
+    })
+    res.status(200).json({
+        message: "order canceled successfully"
+    })
+}
+
+/////////////////////admin side order controls/////////////////////////////////////////////////////////////////
+
+//change order status
+exports.changeOrderStatus = async(req,res)=>{
+    const userId = req.userId
+    const orderId = req.params.id
+    const {orderStatus} = req.body
+
+    if(!orderStatus){
+        res.status(400).json({
+            message: "orderStatus can't be empty"
+        })
+    }
+
+    const orderData = await order.update({
+        orderStatus
+    },{
+        where:{
+            id: orderId
+        }
+    })
+
+    res.status(200).json({
+        message: "orderStatus updated",
+        orderData
+    })
+}
+
+// change payment status
+exports.changePaymentStatus = async(req,res)=>{
+    const userId = req.userId
+    const orderId = req.params.id
+    const {paymentStatus} = req.body
+
+    const orderData = await order.findOne({
+        where:{
+            id: orderId
+        }
+    })
+
+    if(!paymentStatus){
+        return res.status(400).json({
+            message: "paymentStatus is required"
+        })
+    }
+    const paymentData = await payment.update({
+        paymentStatus
+    },{
+        where:{
+            id: orderData.paymentId
+        }
+    })
+    res.status(200).json({
+        message:"paymentStatus updated success",
+        paymentData
+    })
+} 
+
+//delete order
+exports.deleteOrder = async(req,res)=>{
+    const orderId = req.params.id
+     const orderData = await order.findOne({
+        where:{
+            id: orderId
+        }
+     })
+     if(!orderData){
+        return res.status(200).json({
+            message: "can't find the order with that id"
+        })
+     }
+
+     await order.destroy({
+        where:{
+            id: orderId
+        }
+     })
+
+     await payment.destroy({
+        where:{
+            id: orderData.paymentId
+        }
+     })
+
+     await orderDetails.destroy({
+        where:{
+            orderId
+        }
+     })
+
+     res.status(200).json({
+        message: "order deleted successfully"
+     })
 }
 
