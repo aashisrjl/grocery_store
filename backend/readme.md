@@ -25,24 +25,24 @@ The Grocery Store project is a backend service designed for an e-commerce platfo
 
 # Authentication Route
 # Method        endPoint                    desc
-post           /auth/login              handle user login
-post           /auth/register           handle user registration
-get            /auth/google             handle google authentication
-get            /auth/google/callback    handle google callback
-get            /auth/facebook           handle facebook authentication
-get             /auth/facebook/callback handle facebook callback
-get            /auth/logout             handle user logout
+post           /auth/login              handle user login <br>
+post           /auth/register           handle user registration <br>
+get            /auth/google             handle google authentication <br>
+get            /auth/google/callback    handle google callback <br>
+get            /auth/facebook           handle facebook authentication <br>
+get             /auth/facebook/callback handle facebook callback <br>
+get            /auth/logout             handle user logout <br>
 
 # Product Route
 # Method        endPoint                    desc
-post           /products                add products
-get            /products                get all products
-get            /products/:id            get product by id
-patch          /products/:id            update product by admin
-delete         /products/:id            delete product by admin
-get            /products/:category      get products by category
-get            /products/:price         get products by price
-get            /products/:rating        get products by rating
-get            /products/:name          get products by name
-get            /products/:description   get products by description
+post           /products                add products <br>
+get            /products                get all products <br>
+get            /products/:id            get product by id <br>
+patch          /products/:id            update product by admin <br>
+delete         /products/:id            delete product by admin <br>
+get            /products/:category      get products by category <br>
+get            /products/:price         get products by price <br>
+get            /products/:rating        get products by rating <br>
+get            /products/:name          get products by name <br>
+get            /products/:description   get products by description <br>
 
