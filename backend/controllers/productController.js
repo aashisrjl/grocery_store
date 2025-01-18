@@ -1,4 +1,4 @@
-const { product, category, Sequelize } = require('../models');
+const { product, category, Sequelize, users } = require('../models');
 const { Op } = Sequelize;
 const fs = require("fs");
 
@@ -118,7 +118,7 @@ exports.getSingleProduct = async(req,res)=>{
         })
     }else{
         res.status(404).json({
-            message:"Product not found"
+            message:"Product can't found"
         })
     }
 }
@@ -259,11 +259,11 @@ exports.getProductByCategoryName = async (req, res) => {
 
 //get product by description
 exports.getProductByDesc = async(req,res)=>{
-    const {productDesc} = req.params
+    const {desc} = req.params
     const data = await product.findAll({
         where:{
             description:{
-            [Op.like]: `%${productDesc}%`
+            [Op.like]: `%${desc}%`
             }
         }
     })
@@ -273,7 +273,8 @@ exports.getProductByDesc = async(req,res)=>{
         })
     }
     res.status(200).json({
-        message: "product fetched from "
+        message: "product fetched from description ",
+        data
     })
 } 
 

@@ -16,19 +16,19 @@ router.route("/product/:id")
 .patch(isAuthenticated,allowedTo('admin'),upload.single('image'),errorHandler(updateProduct))
 .delete(isAuthenticated,allowedTo('admin'),errorHandler(deleteProduct));
 
-router.route("/product/:categoryId")
+router.route("/product/categoryId/:categoryId")
 .get(errorHandler(getProductByCategory))
 
-router.route("/product/:categoryName")
+router.route("/product/categoryName/:categoryName")
 .get(errorHandler(getProductByCategoryName))
 
-router.route("/product/:name")
+router.route("/product/name/:name")
 .get(errorHandler(getProductsByName))
 
-router.route("/product/:rating")
+router.route("/product/rating/:rating")
 .get(errorHandler(getProductByRating))
 
-router.route("/product/:desc")
+router.route("/product/desc/:desc")
 .get(errorHandler(getProductByDesc))
 
 module.exports = router;

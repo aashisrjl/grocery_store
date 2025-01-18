@@ -1,12 +1,17 @@
 const express = require('express');
 const { isAuthenticated } = require('../middleware/isAuthenticated');
 const { allowedTo } = require('../middleware/allowedTo');
-const { addCredit, paidCredit, unpaidCredit, deleteCredit, handleCreditRequest } = require('../controllers/creditController');
+const { addCredit, paidCredit, unpaidCredit, deleteCredit, handleCreditRequest, creditRequest } = require('../controllers/creditController');
 const { errorHandler } = require('../services/catchAsyncError');
 const router = express.Router();
 
-router.route("/credit").post(isAuthenticated,errorHandler(addCredit))
-// router.route("/credit-req/:id").post(isAuthenticated,requestCredit)
+router.route("/credit")
+.post(isAuthenticated,allowedTo('admin'),
+errorHandler(addCredit))
+
+router.route("/credit-req/:productId")
+.post(isAuthenticated,creditRequest)
+
 router.route("/credit-handle/:id")
 .post(isAuthenticated,allowedTo('admin'),errorHandler(handleCreditRequest))
 

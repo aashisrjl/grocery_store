@@ -1,23 +1,17 @@
-const { credit } = require("../models");
+const { credit, users } = require("../models");
 
 exports.addCredit = async(req,res)=>{
-    const {productId,productName,username,email,phone,address} = req.body
-    let creditData = {};
-    if(req.user){
-        //register user
-        creditData = {
-            userId :req.userId,
-            productId
-        }
-    }else{
-        creditData = {
+    const {productName,username,email,phone,address,price} = req.body
+
+    let creditData = {
             username,
             email,
             phone,
             address,
-            productName
+            productName,
+            price,
+            status: "accepted"
         }
-    }
     const newCredit = await credit.create(creditData)
     res.status(200).json({
         message: "credit add/ apply",
@@ -25,18 +19,46 @@ exports.addCredit = async(req,res)=>{
     })
 
 }
+// request credit
+exports.creditRequest = async(req,res)=>{
+    const userId = req.userId;
+    const {productId} = req.params
+    const product = await product.findById(productId)
+    if(!product) return res.status(404).json({message: "product not found"})
+        const user = await users.findById(userId)
+        if(!user) return res.status(404).json({message: "user not found"})
+        //     const credit = await credit.findOne({username:user.username})
+        // if(!credit) return res.status(404).json({message: "credit not found"})
+        const newCredit = await credit.create({
+        username: req.user.username,
+        email: req.user.email,
+        productName:product.productName,
+        price: product.price,
+        userId,
+        productId    
+    })
+        res.status(200).json({
+            message: "credit request successful",
+            newCredit
+            })
+
+
+
+
+}
 
 //handle credit request
 exports.handleCreditRequest = async(req,res)=>{
     const creditId= req.params.id
-    const {status} = req.body
+    const {status,isPaid} = req.body
     const creditReq = await credit.findByPk(creditId);
     if(!creditReq){
         return res.status(400).json({
             message: "credit not found"
         })
     }
-    creditReq.status = status
+    creditReq.status = status || creditReq.status
+    creditReq.isPaid = isPaid  || creditReq.isPaid
     creditReq.save();
 
     res.status(200).json({
