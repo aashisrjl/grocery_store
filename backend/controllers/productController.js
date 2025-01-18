@@ -1,4 +1,5 @@
-const { product, category, users } = require("../models");
+const { product, category, Sequelize } = require('../models');
+const { Op } = Sequelize;
 const fs = require("fs");
 
 exports.addProduct = async(req,res)=>{
@@ -168,7 +169,7 @@ exports.updateProduct = async(req,res)=>{
 
 //get products by category id
 exports.getProductByCategory = async(req,res)=>{
-    const categoryId = req.params.id
+    const {categoryId} = req.params
     const data = await product.findAll({
         where:{
             categoryId:categoryId
@@ -209,7 +210,7 @@ exports.getProductsByName = async(req,res)=>{
 
 //get product by rating
 exports.getProductByRating = async(req,res)=>{
-    const rating = req.params.rating
+    const {rating } = req.params
     const data = await product.findAll({
         where:{
             rating: {
@@ -228,44 +229,55 @@ exports.getProductByRating = async(req,res)=>{
         })
 }
 
-const { product, category, Sequelize } = require('../models');
-const { Op } = Sequelize;
 
+//category
 exports.getProductByCategoryName = async (req, res) => {
     const categoryName = req.params.categoryName;
 
-    try {
         const data = await product.findAll({
             include: {
                 model: category,
-                as: 'Category', // Ensure this matches the alias defined in the association
+                as: 'CategoryDetails', 
                 where: {
-                    categoryName: { [Op.like]: `%${categoryName}%` } // Use Op.like for partial matching
-                },
-                attributes: ['categoryName'] // Specify the fields you want from the category table
+                    categoryName: { [Op.like]: `%${categoryName}%` }                 },
+                attributes: ['categoryName'] 
             }
         });
 
-        // Check if no products are found
         if (data.length === 0) {
             return res.status(404).json({
                 message: "No products found with this category name",
             });
         }
 
-        // Respond with the retrieved products
         res.status(200).json({
             message: "Products retrieved successfully by category name",
             data,
         });
-    } catch (error) {
-        console.error(error); // Log the error for debugging
-        res.status(500).json({
-            message: "An error occurred while fetching products",
-            error: error.message,
-        });
+
+}
+
+//get product by description
+exports.getProductByDesc = async(req,res)=>{
+    const {productDesc} = req.params
+    const data = await product.findAll({
+        where:{
+            description:{
+            [Op.like]: `%${productDesc}%`
+            }
+        }
+    })
+    if(data.length == 0){
+        return res.status(400).json({
+            message: "product not found"
+        })
     }
-};
+    res.status(200).json({
+        message: "product fetched from "
+    })
+} 
+
+
 
 
 
