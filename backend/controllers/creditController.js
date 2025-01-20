@@ -1,5 +1,6 @@
 // const { raw } = require("express");
 const { credit, users, product, category } = require("../models");
+const sendMail = require("../services/sendMail");
 
 exports.addCredit = async(req,res)=>{
     const {productName,username,email,phone,address,price} = req.body
@@ -216,6 +217,14 @@ exports.handleCreditRequest = async(req,res)=>{
     creditReq.status = status || creditReq.status
     creditReq.isPaid = isPaid  || creditReq.isPaid
     creditReq.save();
+    
+    //SEND MAIL TO USER
+    sendMail({
+        email: creditReq.email,
+        subject: `Status Updated for your credit Request`,
+        text: `your request has been ${status} by the Rijal_Grocery_store <br> THANK YOU FOR CONNECTING WITH OUR STORE AND WELCOME`
+
+    })
 
     res.status(200).json({
         message: `credit req updated to ${status}`,
