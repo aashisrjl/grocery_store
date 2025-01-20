@@ -1,4 +1,4 @@
-const { credit, users } = require("../models");
+const { credit, users, product } = require("../models");
 
 exports.addCredit = async(req,res)=>{
     const {productName,username,email,phone,address,price} = req.body
@@ -19,21 +19,91 @@ exports.addCredit = async(req,res)=>{
     })
 
 }
+
+//get all credits
+exports.getAllCredit = async(req,res)=>{
+    const allCredit = await credit.findAll();
+    if(allCredit.length == 0){
+       return res.status(404).json({
+            message: "no credit found"
+        })
+    }
+
+    res.status(200).json({
+        message: "credit fetched",
+        allCredit
+    })
+}
+
+// get credit by accepted status
+exports.getAcceptedCredit = async(req,res)=>{
+    const acceptedCredit = await credit.findAll({
+        where:{
+            status: "accepted"
+        }
+    })
+    if(acceptedCredit.length == 0){
+        return res.status(404).json({
+            message: "accepted credit not found"
+        })
+    }
+    res.status(200).json({
+        message: "accepted credits found",
+        acceptedCredit
+    })
+}
+
+//get credit by rejected status
+exports.getRejectedCredit = async(req,res)=>{
+    const rejectedCredit = await credit.findAll({
+        where:{
+            status: "rejected"
+        }
+    })
+    if(rejectedCredit.length == 0){
+        return res.status(404).json({
+            message: "rejected credit not found"
+        })
+    }
+    res.status(200).json({
+        message: "rejected credits found",
+        rejectedCredit
+    })
+}
+
+//get credit by pending status
+exports.getPendingCredit = async(req,res)=>{
+    const pendingCredit = await credit.findAll({
+        where:{
+            status: "pending"
+        }
+    })
+    if(pendingCredit.length == 0){
+        return res.status(404).json({
+            message: "pending credit not found"
+        })
+    }
+    res.status(200).json({
+        message: "pending credits found",
+        pendingCredit
+    })
+}
+
 // request credit
 exports.creditRequest = async(req,res)=>{
     const userId = req.userId;
     const {productId} = req.params
-    const product = await product.findById(productId)
-    if(!product) return res.status(404).json({message: "product not found"})
-        const user = await users.findById(userId)
+    const products = await product.findByPk(productId)
+    if(!products) return res.status(404).json({message: "product not found"})
+        const user = await users.findByPk(userId)
         if(!user) return res.status(404).json({message: "user not found"})
         //     const credit = await credit.findOne({username:user.username})
         // if(!credit) return res.status(404).json({message: "credit not found"})
         const newCredit = await credit.create({
         username: req.user.username,
         email: req.user.email,
-        productName:product.productName,
-        price: product.price,
+        productName:products.productName,
+        price: products.price,
         userId,
         productId    
     })
@@ -41,9 +111,6 @@ exports.creditRequest = async(req,res)=>{
             message: "credit request successful",
             newCredit
             })
-
-
-
 
 }
 
