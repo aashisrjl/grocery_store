@@ -147,7 +147,7 @@ exports.verifyEsewaPayment = async (req, res) => {
             // Update the payment status and store the refId as pidx in the database
             const updateResult = await payment.update(
                 { paymentStatus: "paid", pidx: refId }, 
-                { where: { id: oid } } 
+                { where: { id: oid } } // Match the order ID
             );
 
             if (updateResult[0] === 0) {
@@ -181,7 +181,7 @@ exports.verifyKhaltiPayment = async(req,res)=>{
     }
     const response = axios.post('https://dev.khalti.com/api/v2/epayment/lookup/',{pidx},{
         headers:{
-            "Authorization": "key ",
+            "Authorization": "key dbae3da99710442a83d9068ff967b2ed",
             "Content-Type": "application/json"
         }
     })
