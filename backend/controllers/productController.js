@@ -239,7 +239,8 @@ exports.getProductByCategoryName = async (req, res) => {
                 model: category,
                 as: 'CategoryDetails', 
                 where: {
-                    categoryName: { [Op.like]: `%${categoryName}%` }                 },
+                    categoryName: { [Op.like]: `%${categoryName}%` } 
+                },
                 attributes: ['categoryName'] 
             }
         });
