@@ -1,7 +1,7 @@
 const express = require('express');
 const { isAuthenticated } = require('../middleware/isAuthenticated');
 const { allowedTo } = require('../middleware/allowedTo');
-const { addCredit, paidCredit, unpaidCredit, deleteCredit, handleCreditRequest, creditRequest, updateCredit, getAllCredit, getAcceptedCredit, getPendingCredit, getRejectedCredit } = require('../controllers/creditController');
+const { addCredit, paidCredit, unpaidCredit, deleteCredit, handleCreditRequest, creditRequest, updateCredit, getAllCredit, getAcceptedCredit, getPendingCredit, getRejectedCredit, getLoginUserCredit, getNotLoginUserCredit } = require('../controllers/creditController');
 const { errorHandler } = require('../services/catchAsyncError');
 const router = express.Router();
 
@@ -19,23 +19,27 @@ router.route("/credit-handle/:id")
 
 router.route("/credit/:id")
 .delete(isAuthenticated,allowedTo('admin'),errorHandler(deleteCredit))
-
-router.route("/credit/:id")
 .patch(isAuthenticated,allowedTo('admin'),errorHandler(updateCredit))
 
+
 router.route("/credit-paid")
-.get(errorHandler(paidCredit))
+.get(isAuthenticated,errorHandler(paidCredit))
 
 router.route("/credit-unpaid")
-.get(errorHandler(unpaidCredit))
+.get(isAuthenticated,errorHandler(unpaidCredit))
 
 router.route("/credit-accepted")
-.get(errorHandler(getAcceptedCredit))
+.get(isAuthenticated,errorHandler(getAcceptedCredit))
 
 router.route("/credit-rejected")
-.get(errorHandler(getRejectedCredit))
+.get(isAuthenticated,errorHandler(getRejectedCredit))
 
 router.route("/credit-pending")
-.get(errorHandler(getPendingCredit))
+.get(isAuthenticated,errorHandler(getPendingCredit))
 
+router.route("/credit-loginuser")
+.get(isAuthenticated,errorHandler(getLoginUserCredit))
+
+router.route("/credit-notloginuser")
+.get(isAuthenticated,errorHandler(getNotLoginUserCredit))
 module.exports = router;

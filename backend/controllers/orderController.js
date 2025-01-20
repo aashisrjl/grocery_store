@@ -71,7 +71,7 @@ exports.createOrder = async(req,res)=>{
         res.status(200).json({
             message: "order placed successs by khalti",
             url: khaltiResponse.payment_url,
-            pidx: khaltiResponse.pidx
+            
         })
 
     }
@@ -147,7 +147,7 @@ exports.verifyEsewaPayment = async (req, res) => {
             // Update the payment status and store the refId as pidx in the database
             const updateResult = await payment.update(
                 { paymentStatus: "paid", pidx: refId }, 
-                { where: { id: oid } } // Match the order ID
+                { where: { id: oid } } 
             );
 
             if (updateResult[0] === 0) {
@@ -172,7 +172,7 @@ exports.verifyEsewaPayment = async (req, res) => {
 
 ////////////////////////////////////verify khalti payment
 exports.verifyKhaltiPayment = async(req,res)=>{
-    const {pidx} = req.query
+    const { pidx } = req.query
     const userId = req?.userId
     if(!pidx){
         return res.status(400).json({
@@ -181,7 +181,7 @@ exports.verifyKhaltiPayment = async(req,res)=>{
     }
     const response = axios.post('https://dev.khalti.com/api/v2/epayment/lookup/',{pidx},{
         headers:{
-            "Authorization": "key dbae3da99710442a83d9068ff967b2ed",
+            "Authorization": "key ",
             "Content-Type": "application/json"
         }
     })

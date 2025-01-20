@@ -1,4 +1,5 @@
-const { credit, users, product } = require("../models");
+// const { raw } = require("express");
+const { credit, users, product, category } = require("../models");
 
 exports.addCredit = async(req,res)=>{
     const {productName,username,email,phone,address,price} = req.body
@@ -10,7 +11,7 @@ exports.addCredit = async(req,res)=>{
             address,
             productName,
             price,
-            status: "accepted"
+            status: "approved"
         }
     const newCredit = await credit.create(creditData)
     res.status(200).json({
@@ -22,7 +23,29 @@ exports.addCredit = async(req,res)=>{
 
 //get all credits
 exports.getAllCredit = async(req,res)=>{
-    const allCredit = await credit.findAll();
+    const allCredit = await credit.findAll({
+        include: [
+            {
+                model: users,
+                attributes: ["username", "email", "role"],
+                required: false,
+            },
+            {
+                model: product,
+                attributes: ["id","name","price","description","unit","stock"],
+                include:[
+                    {
+                        model: category,
+                        as: 'CategoryDetails',
+                        attributes:['id','categoryName']
+                    }
+
+                ],
+                required: false, 
+            },
+        ],
+        
+    });
     if(allCredit.length == 0){
        return res.status(404).json({
             message: "no credit found"
@@ -39,8 +62,27 @@ exports.getAllCredit = async(req,res)=>{
 exports.getAcceptedCredit = async(req,res)=>{
     const acceptedCredit = await credit.findAll({
         where:{
-            status: "accepted"
-        }
+            status: "approved"
+        },include: [
+            {
+                model: users,
+                attributes: ["username", "email", "role"],
+                required: false,
+            },
+            {
+                model: product,
+                attributes: ["id","name","price","description","unit","stock"],
+                include:[
+                    {
+                        model: category,
+                        as: 'CategoryDetails',
+                        attributes:['id','categoryName']
+                    }
+
+                ],
+                required: false, 
+            },
+        ],
     })
     if(acceptedCredit.length == 0){
         return res.status(404).json({
@@ -58,7 +100,27 @@ exports.getRejectedCredit = async(req,res)=>{
     const rejectedCredit = await credit.findAll({
         where:{
             status: "rejected"
-        }
+        },
+        include: [
+            {
+                model: users,
+                attributes: ["username", "email", "role"],
+                required: false,
+            },
+            {
+                model: product,
+                attributes: ["id","name","price","description","unit","stock"],
+                include:[
+                    {
+                        model: category,
+                        as: 'CategoryDetails',
+                        attributes:['id','categoryName']
+                    }
+
+                ],
+                required: false, 
+            },
+        ],
     })
     if(rejectedCredit.length == 0){
         return res.status(404).json({
@@ -71,23 +133,50 @@ exports.getRejectedCredit = async(req,res)=>{
     })
 }
 
-//get credit by pending status
-exports.getPendingCredit = async(req,res)=>{
-    const pendingCredit = await credit.findAll({
-        where:{
-            status: "pending"
+// Get credit by pending status
+exports.getPendingCredit = async (req, res) => {
+
+        const pendingCredit = await credit.findAll({
+            where: {
+                status: "pending",
+            },
+            include: [
+                {
+                    model: users,
+                    attributes: ["username", "email", "role"],
+                    required: false,
+                },
+                {
+                    model: product,
+                    attributes: ["id","name","price","description","unit","stock"],
+                    include:[
+                        {
+                            model: category,
+                            as: 'CategoryDetails',
+                            attributes:['id','categoryName']
+                        }
+
+                    ],
+                    required: false, 
+                },
+            ],
+            
+        });
+
+     
+        if (pendingCredit.length === 0) {
+            return res.status(404).json({
+                message: "Pending credit not found",
+            });
         }
-    })
-    if(pendingCredit.length == 0){
-        return res.status(404).json({
-            message: "pending credit not found"
-        })
-    }
-    res.status(200).json({
-        message: "pending credits found",
-        pendingCredit
-    })
-}
+
+        res.status(200).json({
+            message: "Pending credits found",
+            data: pendingCredit,
+        });
+   
+};
+
 
 // request credit
 exports.creditRequest = async(req,res)=>{
@@ -208,5 +297,57 @@ exports.paidCredit = async(req,res)=>{
         data
     })
 }
-    
+
+// Get credit of logged-in user
+exports.getLoginUserCredit = async (req, res) => {
+    const userId = req.userId;
+    console.log(userId)
+
+    const isCredit = await credit.findAll({
+        where: {
+            userId
+        },
+        include: [
+            {
+                model: users,
+                attributes: ["username", "email", "role"]
+            },
+            {
+                model: product
+            }
+        ]
+    });
+
+    if (isCredit.length === 0) {
+        return res.status(404).json({
+            message: "No credits found for the logged-in user."
+        });
+    }
+
+    res.status(200).json({
+        message: "Fetched logged-in user credits.",
+        data: isCredit
+    });
+
+};
+
+//get not login user credit
+exports.getNotLoginUserCredit = async(req,res)=>{
+    const data = await credit.findAll({
+        where:{
+            userId: null
+        }
+    })
+    if(data.length == 0){
+        return res.status(400).json({
+            message: "unauthorized user credit data not found"
+        })
+    }
+
+    res.status(200).json({
+        message: "fetched login user credit data",
+        data
+    })
+}
+
     

@@ -73,6 +73,14 @@ db.order.belongsTo(db.payment)
 db.users.hasMany(db.order)
 db.order.belongsTo(db.users)
 
+//credit and users
+db.users.hasMany(db.credit)
+db.credit.belongsTo(db.users)
+
+//credit and products
+db.product.hasMany(db.credit)
+db.credit.belongsTo(db.product)
+
 
  
 
