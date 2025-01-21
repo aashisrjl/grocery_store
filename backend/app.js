@@ -9,6 +9,19 @@ const cookieParser = require("cookie-parser");
 // const jwt = require("jsonwebtoken");
 const passport = require('./services/passport.js')
 
+// cors origin setup
+const cors = require("cors");
+app.use(cors());
+const corsOption ={
+    origin:"http://localhost:5173",
+    methods:["GET", "POST", "PUT", "DELETE","PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}
+
+app.use(cors(corsOption));
+
+
 
 app.use(cookieParser());
 app.use(express.urlencoded({extended: false}));
