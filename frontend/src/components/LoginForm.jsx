@@ -60,7 +60,7 @@ const LoginForm = ({ switchToRegister }) => {
         <p className="text-sm text-center text-gray-600 mt-4">
           Don't have an account?{' '}
           <span
-            onClick={switchToRegister}
+             onClick={()=>{window.location.href='/register'}}
             className="text-green-500 cursor-pointer underline"
           >
             Register here

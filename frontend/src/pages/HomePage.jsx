@@ -94,6 +94,14 @@ export function HomePage() {
                   <ShoppingBasket className="h-5 w-5" />
                   <span>My Orders</span>
                 </Link>
+
+                <Link
+                  to="/credits"
+                  className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+                >
+                  <ShoppingBasket className="h-5 w-5" />
+                  <span>Credits</span>
+                </Link>
                 
                 <Link
                   to="/login"
@@ -237,6 +245,7 @@ export function HomePage() {
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/credits" element={"this is credit page"} />
             </Routes>
           </main>
         </div>

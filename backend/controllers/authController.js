@@ -100,7 +100,7 @@ exports.googleCallback = async (req, res) => {
         }
 
         res.cookie('token', token);
-        res.redirect('http://localhost:3000/about');
+        res.redirect('http://localhost:5173/settings');
    
 };
 
@@ -133,7 +133,7 @@ exports.facebookCallback = async (req, res) => {
         }
 
         res.cookie('token', token);
-        res.redirect('http://localhost:3000/about');
+        res.redirect('http://localhost:5173/settings');
     
 };
 

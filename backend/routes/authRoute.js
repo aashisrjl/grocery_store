@@ -9,21 +9,21 @@ router.route("/register").post(errorHandler(handleRegister))
 router.route("/logout").get(errorHandler(handleLogout))
 
 // Google authentication routes
-router.get('/google',
+router.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'], session: false })
 );
 
-router.get('/google/callback',
+router.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login', session: false }),
     errorHandler(googleCallback)
 );
 
 // Facebook authentication routes
-router.get('/facebook',
+router.get('/auth/facebook',
     passport.authenticate('facebook', { scope: ['email'], session: false })
 );
 
-router.get('/facebook/callback',
+router.get('/auth/facebook/callback',
     passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
     errorHandler(facebookCallback)
 );
