@@ -1,5 +1,4 @@
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
 const express = require('express');
 const app = express();
 const port = process.env.SERVER_PORT || 3000;
@@ -21,8 +20,7 @@ const corsOption ={
 
 app.use(cors(corsOption));
 
-
-
+// packgaes 
 app.use(cookieParser());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
@@ -30,13 +28,14 @@ app.use(passport.initialize());
 
 //database connection
 require('./models/index.js');
+
 //admin seeder
-const { adminSeeder } = require("./utils/adminSeeder.js");
+const {adminSeeder} = require("./utils/adminSeeder.js")
 adminSeeder();
 //category seeder
 const { categorySeeder } = require("./utils/categorySeeder.js");
 categorySeeder();
-const { users } = require("./models/index.js");
+
 
 app.get('/about', (req, res) => {
     res.send('logged in!');

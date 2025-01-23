@@ -14,7 +14,7 @@ router.route("/success-esewa")
 .get(isAuthenticated,errorHandler(verifyEsewaPayment))
 
 router.route("/success-khalti")
-.get(isAuthenticated,errorHandler(verifyKhaltiPayment))
+.get(errorHandler(verifyKhaltiPayment))
 
 router.route("/order-cancel/:id")
 .patch(isAuthenticated,errorHandler(cancelOrder))

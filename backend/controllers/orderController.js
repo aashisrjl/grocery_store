@@ -1,5 +1,6 @@
-const { default: axios } = require("axios");
+
 const { orderDetails, payment, order, users } = require("../models");
+const axios = require('axios');
 
 exports.createOrder = async(req,res)=>{
     const userId = req?.userId
@@ -39,11 +40,7 @@ exports.createOrder = async(req,res)=>{
             message:"Order create unsuccessfull"
         })
     }
-    res.status(200).json({
-        message: "order created with cod"
-    })
-
-
+    
     if(paymentMethod === 'khalti'){
         const data ={
             return_url: "http://localhost:3000/success-khalti",
@@ -68,7 +65,7 @@ exports.createOrder = async(req,res)=>{
         const khaltiResponse = response.data
         paymentData.pidx = khaltiResponse.pidx
         paymentData.save();
-        res.status(200).json({
+        return res.status(200).json({
             message: "order placed successs by khalti",
             url: khaltiResponse.payment_url,
             
@@ -103,11 +100,15 @@ exports.createOrder = async(req,res)=>{
     
         const paymentUrl = `${esewaUrl}?${queryString}`;
     
-        res.status(200).json({
+         return res.status(200).json({
             message: "Order placed successfully with eSewa",
             url: paymentUrl
         });
     }
+
+    res.status(200).json({
+        message: "order created with cod"
+    })
     
 }
 
@@ -171,40 +172,62 @@ exports.verifyEsewaPayment = async (req, res) => {
 
 
 ////////////////////////////////////verify khalti payment
-exports.verifyKhaltiPayment = async(req,res)=>{
-    const { pidx } = req.query
-    const userId = req?.userId
-    if(!pidx){
-        return res.status(400).json({
-            message:"Payment id is required"
-        })
-    }
-    const response = axios.post('https://dev.khalti.com/api/v2/epayment/lookup/',{pidx},{
-        headers:{
-            "Authorization": "key dbae3da99710442a83d9068ff967b2ed",
-            "Content-Type": "application/json"
-        }
-    })
 
-    const data = response.data
-    if(data.status === 'completed'){
-        await payment.update({
-            paymentStatus: "paid"
-        },{
-            where:{
-                pidx
-            }
-        })
 
-        res.status(200).json({
-            message: "payment verified"
-        })
-    }else{
-        res.status(400).json({
-            message: "payment not verified"
-        })
+exports.verifyKhaltiPayment = async (req, res) => {
+  try {
+    const { pidx } = req.query;
+
+    // Validate request
+    if (!pidx) {
+      return res.status(400).json({
+        message: "Payment ID (pidx) is required",
+      });
     }
-}
+
+    // Khalti API call
+    const response = await axios.post(
+      'https://dev.khalti.com/api/v2/epayment/lookup/',
+      { pidx },
+      {
+        headers: {
+          Authorization: `Key dbae3da99710442a83d9068ff967b2ed`, // Use environment variable
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = response.data;
+    console.log("Khalti Response: ", data);
+
+    // Check payment status
+    if (data && data.status === 'Completed') {
+      // Update payment status in the database
+      await payment.update(
+        { paymentStatus: "Paid" },
+        { where: { pidx } }
+      );
+
+      return res.status(200).json({
+        message: "Payment verified successfully",
+      });
+    } else {
+      return res.status(400).json({
+        message: "Payment not verified",
+        details: data,
+      });
+    }
+  } catch (error) {
+    console.error("Error verifying payment: ", error);
+
+    // Handle errors (e.g., network issues, invalid responses)
+    return res.status(500).json({
+      message: "An error occurred while verifying the payment",
+      error: error.message,
+    });
+  }
+};
+
 
 
 //get order of a user 

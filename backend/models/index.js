@@ -25,7 +25,9 @@ sequelize
     console.log("Error" + err);
   });
 
+ 
 const db = {};
+
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
@@ -82,17 +84,7 @@ db.product.hasMany(db.credit)
 db.credit.belongsTo(db.product)
 
 
- 
 
-
-// db.users.hasMany(db.questions)
-// db.questions.belongsTo(db.users)
-
-// db.questions.hasMany(db.answers)
-// db.answers.belongsTo(db.questions)
-
-// db.users.hasMany(db.answers)
-// db.answers.belongsTo(db.users)
 
 db.sequelize.sync({ force: false}).then(() => {
   console.log("yes re-sync done");
