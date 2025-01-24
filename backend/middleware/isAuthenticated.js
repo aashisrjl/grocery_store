@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { users } = require("../models");
-const {promisify} = require("util")
+const {promisify} = require("util");
 
 
 exports.isAuthenticated = async(req,res,next)=>{
@@ -9,7 +9,7 @@ exports.isAuthenticated = async(req,res,next)=>{
     if(!token){
         return res.status(401).json({
             success:false,
-            message:"You are not logged in" 
+            message:"can't find token"
         });
     }
     const decoded = await promisify(jwt.verify)(token,process.env.JWT_SECRET)
