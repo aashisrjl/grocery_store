@@ -5,11 +5,31 @@ const LoginForm = ({ switchToRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Logging in with Email: ${email}`);
+  
+    // Send login request to the backend
+    const response = await fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+  
+    const data = await response.json();
+  
+    if (response.ok) {
+      // Store the token in a cookie (backend should handle the expiration)
+      document.cookie = `token=${data.token}; path=/`;
+  
+      alert('Login successful!');
+      // Optionally, redirect or perform other actions
+    } else {
+      alert(data.message);
+    }
   };
+  
 
   return (
     <>
@@ -60,7 +80,7 @@ const LoginForm = ({ switchToRegister }) => {
         <p className="text-sm text-center text-gray-600 mt-4">
           Don't have an account?{' '}
           <span
-             onClick={()=>{window.location.href='/register'}}
+            onClick={()=>{window.location.href='/register'}}
             className="text-green-500 cursor-pointer underline"
           >
             Register here

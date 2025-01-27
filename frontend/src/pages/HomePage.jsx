@@ -26,6 +26,7 @@ import SettingPage from "./Setting";
 import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm";
 import Cart from "./Cart";
+import OrderDetail from "./OrderDetail";
 import Banner from "../components/Banner";
 
 export function HomePage() {
@@ -246,6 +247,7 @@ export function HomePage() {
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/credits" element={"this is credit page"} />
+              <Route path="/orderdetail" element={<OrderDetail />} />
             </Routes>
           </main>
         </div>
