@@ -128,7 +128,7 @@ export function Orders() {
               </div>
               <div className="mt-6 flex items-center justify-between pt-4 border-t">
                 <p className="font-medium">Total: ${order.totalAmount.toFixed(2)}</p>
-                <Link to="/orderdetail">
+                <Link to={`/orderdetail/${order.id}`}>
                 <button className="flex items-center space-x-2 text-green-700 hover:text-green-800 font-medium">
                   <span>Order Details</span>
                   <ArrowRight className="h-4 w-4" />

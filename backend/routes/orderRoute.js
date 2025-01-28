@@ -1,5 +1,5 @@
 const express = require('express');
-const { createOrder, verifyEsewaPayment, verifyKhaltiPayment, getOrder, cancelOrder, changeOrderStatus, changePaymentStatus, deleteOrder } = require('../controllers/orderController');
+const { createOrder, verifyEsewaPayment, verifyKhaltiPayment, getOrder, cancelOrder, changeOrderStatus, changePaymentStatus, deleteOrder, getOrderDetailById } = require('../controllers/orderController');
 const { errorHandler } = require('../services/catchAsyncError');
 const { isAuthenticated } = require('../middleware/isAuthenticated');
 const { allowedTo } = require('../middleware/allowedTo');
@@ -29,6 +29,7 @@ router.route("/order-payment/:id")
 
 router.route("/order/:id")
 .delete(isAuthenticated,allowedTo('admin'),errorHandler(deleteOrder))
+.get(isAuthenticated,getOrderDetailById)
 
 
 module.exports = router
