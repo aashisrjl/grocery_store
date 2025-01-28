@@ -28,6 +28,7 @@ import RegisterForm from "../components/RegisterForm";
 import Cart from "./Cart";
 import OrderDetail from "./OrderDetail";
 import Banner from "../components/Banner";
+import axios from "axios";
 
 export function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -48,112 +49,142 @@ export function HomePage() {
     );
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/logout`,{
+        withCredentials: true
+      });
+      console.log(response)
+  
+      if (response.status === 200) {
+        // Assuming successful logout redirects to login
+        window.location.href='/login';
+      } else {
+        console.error("Unexpected response status:", response.status);
+      }
+    } catch (error) {
+      console.error("Logout failed:", error.message);
+    }
+  };
+  
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 flex">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r transform ${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0 transition-transform duration-200 ease-in-out`}
+  className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r transform ${
+    isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+  } lg:translate-x-0 transition-transform duration-200 ease-in-out`}
+>
+  <div className="flex flex-col h-full">
+    <div className="p-4 border-b">
+      <div className="flex items-center justify-between lg:justify-center">
+        <h1 className="text-xl font-bold text-green-700 flex items-center">
+          <Leaf className="h-6 w-6 mr-2" />
+          FRESH MARKET
+        </h1>
+        <button
+          className="lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
         >
-          <div className="flex flex-col h-full">
-            <div className="p-4 border-b">
-              <div className="flex items-center justify-between lg:justify-center">
-                <h1 className="text-xl font-bold text-green-700 flex items-center">
-                  <Leaf className="h-6 w-6 mr-2" />
-                  FRESH MARKET
-                </h1>
-                <button
-                  className="lg:hidden"
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-            </div>
-            <nav className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-1 mb-8">
-                <Link
-                  to="/"
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <Home className="h-5 w-5" />
-                  <span>Home</span>
-                </Link>
-                <Link
-                  to="/favorites"
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <Heart className="h-5 w-5" />
-                  <span>Favorites</span>
-                </Link>
-                <Link
-                  to="/orders"
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <ShoppingBasket className="h-5 w-5" />
-                  <span>My Orders</span>
-                </Link>
+          <X className="h-6 w-6" />
+        </button>
+      </div>
+    </div>
+    <nav className="flex-1 overflow-y-auto p-4">
+      <div className="space-y-1 mb-8">
+        <Link
+          to="/"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <Home className="h-5 w-5" />
+          <span>Home</span>
+        </Link>
+        <Link
+          to="/favorites"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <Heart className="h-5 w-5" />
+          <span>Favorites</span>
+        </Link>
+        <Link
+          to="/orders"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <ShoppingBasket className="h-5 w-5" />
+          <span>My Orders</span>
+        </Link>
 
-                <Link
-                  to="/credits"
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <ShoppingBasket className="h-5 w-5" />
-                  <span>Credits</span>
-                </Link>
-                
-                <Link
-                  to="/login"
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <LogIn className="h-5 w-5" />
-                  <span>Login</span>
-                </Link>
-                <Link
-                  to="/register"
-                  className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <LucideLogIn className="h-5 w-5" />
-                  <span>Register Now</span>
-                </Link>
-                <button className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
-                  <LogOut className="h-5 w-5" />
-                  <span>Logout</span>
-                </button>
-                <Link
-                  to="/settings"
-                  className="w-full border-t-2 flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
-                >
-                  <Settings className="h-5 w-5" />
-                  <span>Settings</span>
-                </Link>
+        <Link
+          to="/credits"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <ShoppingBasket className="h-5 w-5" />
+          <span>Credits</span>
+        </Link>
 
-                {/* Dropdown for Category */}
-                <div className="mt-10 border-t-2 p-3
-                ">
-                  <label htmlFor="category" className="block text-gray-700">
-                    Category
-                  </label>
-                  <select
-                    id="category"
-                    className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                  >
-                    <option value="All">All Categories</option>
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </nav>
-          </div>
-        </aside>
+        {/* Check if token exists */}
+        {document.cookie.includes("token") ? (
+          <>
+            <button
+              className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-5 w-5" />
+              <span>Logout</span>
+            </button>
+            <Link
+              to="/settings"
+              className="w-full border-t-2 flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <Settings className="h-5 w-5" />
+              <span>Settings</span>
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/login"
+              className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <LogIn className="h-5 w-5" />
+              <span>Login</span>
+            </Link>
+            <Link
+              to="/register"
+              className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <LucideLogIn className="h-5 w-5" />
+              <span>Register Now</span>
+            </Link>
+          </>
+        )}
+
+        {/* Dropdown for Category */}
+        <div className="mt-10 border-t-2 p-3">
+          <label htmlFor="category" className="block text-gray-700">
+            Category
+          </label>
+          <select
+            id="category"
+            className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="All">All Categories</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </nav>
+  </div>
+</aside>
+
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-screen">

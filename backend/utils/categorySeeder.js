@@ -3,6 +3,9 @@ const { category } = require("../models");
 
 const categoryData = [
     {
+        categoryName:"All"
+    },
+    {
         categoryName:"Fruits & Vegetables"
     },
     {
@@ -13,7 +16,10 @@ const categoryData = [
     },
     {
         categoryName:"Bakery"
-    }
+    },
+    {
+        categoryName:"Dairy & Eggs"
+    },
 ]
 exports.categorySeeder = async(req,res)=>{
     try {

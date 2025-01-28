@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Package, ArrowRight, Clock, CheckCircle, Truck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const getStatusIcon = (status) => {
   switch (status) {
@@ -31,6 +31,7 @@ const getStatusText = (status) => {
 export function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -43,7 +44,7 @@ export function Orders() {
         
         // If no token, handle authentication error (e.g., redirect to login)
         if (!token) {
-          alert('No token found. Please log in.');
+          navigate("/login")
           return; // Optionally, redirect to login page
         }
 

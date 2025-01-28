@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const OrderDetail = () => {
   const { id } = useParams();
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       const token = Cookies.get("token");
 
       if (!token) {
-        setError("Unauthorized. Please log in to view order details.");
-        setLoading(false);
+        navigate("/login");
         return;
       }
 

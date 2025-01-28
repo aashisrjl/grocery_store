@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User, Lock, Mail, Phone, Home, Save, Eye, EyeOff } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const sections = [
   {
@@ -19,15 +21,43 @@ const sections = [
   },
 ];
 export default function SettingPage() {
-  const [activeSection, setActiveSection] =
-    useState("profile");
+  const [activeSection, setActiveSection] =useState("profile");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [user,setUser] = useState(null);
+  const [firstName, lastName] = user?.name?.split(' ') || [];
+  const navigate = useNavigate(); 
+
   const handleSave = (section) => {
     setSuccessMessage(`${section} updated successfully!`);
     setTimeout(() => setSuccessMessage(""), 3000);
   };
+
+  const renderLoginUser = async()=>{
+    const token = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('token='))
+    ?.split('=')[1]; 
+  
+
+  if (!token) {
+    navigate("/login");
+    return; 
+  }
+    const response = await axios.get(`http://localhost:3000/user`,{
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      }
+    })
+    setUser(response.data.data)
+    
+
+  }
+  useEffect(()=>{
+    renderLoginUser()
+  },[])
   const renderProfileSection = () => (
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
@@ -38,6 +68,7 @@ export default function SettingPage() {
           Change Photo
         </button>
       </div>
+      <p>Role: {user?.role}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -46,7 +77,7 @@ export default function SettingPage() {
           <input
             type="text"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-200"
-            defaultValue="John"
+            defaultValue={firstName}
           />
         </div>
         <div>
@@ -56,7 +87,7 @@ export default function SettingPage() {
           <input
             type="text"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-200"
-            defaultValue="Doe"
+            defaultValue={lastName}
           />
         </div>
         <div>
@@ -68,7 +99,7 @@ export default function SettingPage() {
             <input
               type="email"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-200"
-              defaultValue="john.doe@example.com"
+              defaultValue={user?.email}
             />
           </div>
         </div>
@@ -81,7 +112,7 @@ export default function SettingPage() {
             <input
               type="tel"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-200"
-              defaultValue="+1 (555) 123-4567"
+              defaultValue="9847749997"
             />
           </div>
         </div>

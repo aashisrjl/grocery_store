@@ -49,6 +49,7 @@ const productRoute = require("./routes/productRoute.js");
 const cartRoute = require("./routes/cartRoute.js");
 const orderRoute = require("./routes/orderRoute.js");
 const creditRoute = require("./routes/creditRoute.js");
+const userRoute = require("./routes/userRoute.js")
 
 app.use("/",authRoute)
 app.use("/",categoryRoute)
@@ -56,6 +57,7 @@ app.use("/",productRoute)
 app.use("/",cartRoute)
 app.use("/",orderRoute)
 app.use("/",creditRoute)
+app.use("/",userRoute)
 
 
 

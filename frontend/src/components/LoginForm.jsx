@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { FaGoogle, FaFacebook } from 'react-icons/fa'; // Importing icons from react-icons
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ switchToRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,11 +25,21 @@ const LoginForm = ({ switchToRegister }) => {
       // Store the token in a cookie (backend should handle the expiration)
       document.cookie = `token=${data.token}; path=/`;
   
-      alert('Login successful!');
+      navigate("/")
       // Optionally, redirect or perform other actions
     } else {
       alert(data.message);
     }
+  };
+
+  const handleGoogleAuth = (e) => {
+    e.preventDefault();
+    window.location.href = 'http://localhost:3000/auth/google'; // Redirect to Google auth
+  };
+  
+  const handleFacebookAuth = (e) => {
+    e.preventDefault();
+    window.location.href = 'http://localhost:3000/auth/facebook'; // Redirect to Facebook auth
   };
   
 
@@ -68,12 +80,14 @@ const LoginForm = ({ switchToRegister }) => {
           Login
         </button>
         <div className="flex items-center justify-center my-4">
-          <button className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100">
+          <button className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+          onClick={handleGoogleAuth}>
             <FaGoogle className="mr-2 text-blue-500" /> Continue with Google
           </button>
         </div>
         <div className="flex items-center justify-center my-4">
-          <button className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100">
+          <button className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+          onClick={handleFacebookAuth}>
             <FaFacebook className="mr-2 text-blue-700" /> Continue with Facebook
           </button>
         </div>
