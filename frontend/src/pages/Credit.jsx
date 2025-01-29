@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const Credit = () => {
   const [creditRequests, setCreditRequests] = useState([]);
+  const navigate = useNavigate();
   const token = Cookies.get("token");
 
   useEffect(() => {
     const fetchCreditRequests = async () => {
       if (!token) {
-        alert("Please log in to view credit requests");
+        navigate("/login");
         return;
       }
       try {
@@ -26,6 +28,30 @@ const Credit = () => {
 
     fetchCreditRequests();
   }, [token]);
+
+  const handleDeleteCredit = async(id)=>{
+    const token = Cookies.get('token');
+    if(!token){
+        navigate("/login");
+        return
+    }
+    if (!window.confirm("Are you sure you want to delete this credit request?")) {
+        return;
+      }
+    try {
+        const response = await axios.delete(`http://localhost:3000/credit/${id}`,{
+            headers:{
+                Authorization: `Bearer ${token}`,
+            }
+        })
+        if(response.status === 200){
+            return navigate("/credits")
+        }
+        
+    } catch (error) {
+        console.log("error deleting credit",error)
+    }
+  }
 
   return (
     <div className="bg-blue-50 min-h-screen p-8">
@@ -65,7 +91,9 @@ const Credit = () => {
                 <span className="font-semibold">User:</span> {request.user?.username} ({request.user?.email})
               </p>
               <div className="button flex gap-2 mt-4">
-              <button className="bg-red-500 px-4 py-2 rounded">Delete</button>
+              <button className="bg-red-500 px-4 py-2 rounded" 
+              onClick={()=>{handleDeleteCredit(request.id)}}
+              >Delete</button>
               <button className="bg-blue-500 px-4 py-2 rounded" >update</button>
               </div>
             </div>
