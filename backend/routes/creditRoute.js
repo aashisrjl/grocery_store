@@ -18,7 +18,7 @@ router.route("/credit-handle/:id")
 .patch(isAuthenticated,allowedTo('admin'),errorHandler(handleCreditRequest))
 
 router.route("/credit/:id")
-.delete(isAuthenticated,allowedTo('admin'),errorHandler(deleteCredit))
+.delete(isAuthenticated,errorHandler(deleteCredit))
 .patch(isAuthenticated,allowedTo('admin'),errorHandler(updateCredit))
 
 
