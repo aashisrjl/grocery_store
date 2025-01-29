@@ -62,7 +62,7 @@ export default function SettingPage() {
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
         <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
-          <User className="h-12 w-12 text-gray-400" />
+          <img  src={user?.imgUrl} className="h-15 w-15 rounded-3xl " />
         </div>
         <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
           Change Photo

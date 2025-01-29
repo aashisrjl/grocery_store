@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Cookies from "js-cookie";
 
 const AddProduct = () => {
   const [productData, setProductData] = useState({
@@ -7,13 +9,13 @@ const AddProduct = () => {
     price: '',
     description: '',
     unit: '',
-    image: '',
     stock: '',
     categoryId: '',
   });
-
+  const [image, setImage] = useState(null); // Handle image separately
   const [categories, setCategories] = useState([]);
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -34,13 +36,33 @@ const AddProduct = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]); // Store the file object
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = Cookies.get('token');
+    if (!token) {
+      return navigate("/login");
+    }
+
+    const formData = new FormData();
+    formData.append('name', productData.name);
+    formData.append('price', productData.price);
+    formData.append('description', productData.description);
+    formData.append('unit', productData.unit);
+    formData.append('stock', productData.stock);
+    formData.append('categoryId', productData.categoryId);
+    if (image) {
+      formData.append('image', image);
+    }
 
     try {
-      const response = await axios.post('http://localhost:3000/product', productData, {
+      const response = await axios.post('http://localhost:3000/product', formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -51,10 +73,10 @@ const AddProduct = () => {
           price: '',
           description: '',
           unit: '',
-          image: '',
           stock: '',
           categoryId: '',
         });
+        setImage(null);
       }
     } catch (error) {
       setMessage('Error adding product: ' + error.message);
@@ -118,14 +140,12 @@ const AddProduct = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Image Filename</label>
+            <label className="block text-sm font-medium mb-1">Image</label>
             <input
-              type="text"
+              type="file"
               name="image"
-              value={productData.image}
-              onChange={handleInputChange}
+              onChange={handleImageChange}
               className="w-full p-3 border rounded-lg"
-              placeholder="Enter image filename"
               required
             />
           </div>
