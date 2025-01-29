@@ -87,7 +87,7 @@ const OrderDetail = () => {
   return (
     <div className="h-24 min-h-screen text-white flex flex-col items-center py-10">
       <h1 className="text-3xl font-bold text-green-500 mb-6">Order Details</h1>
-      <div className="bg-white rounded-lg shadow-lg  w-full p-6">
+      <div className="bg-white rounded-lg shadow-lg  w-[60rem] p-6">
         <div className="mb-4">
           <h2 className="text-xl font-bold text-black">
             Order ID: <span className="text-blue-500">{order.id}</span>
@@ -132,7 +132,8 @@ const OrderDetail = () => {
           <p className="text-black">Name: {product.name}</p>
           <p className="text-black">Description: {product.description}</p>
           <p className="text-black">Unit: {product.unit}</p>
-          <p className="text-black">Price: ${parseFloat(product.price).toFixed(2)}</p>
+          <p className="text-black">Quantity: {orderData.quantity}</p>
+          <b><p className="text-black">Price: <span className="text-green-500">${parseFloat(product.price).toFixed(2)}</span></p></b>
         </div>
       <button className="bg-red-600 px-2 py-2 mt-1 rounded float-end"
       onClick={()=>{handleCancelOrder(order.id)}}

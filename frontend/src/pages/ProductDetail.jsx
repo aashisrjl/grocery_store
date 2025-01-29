@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import OrderComponent from "../components/OrderComponent";
+import CreditReq from "../components/creditReq";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -61,13 +62,13 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto my-8">
+    <div className="max-w-5xl mx-auto my-8">
       {product && (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <img
             src={`http://localhost:3000/${product.image}`}
             alt={product.name}
-            className="w-full h-96 object-cover"
+            className="w-full h-[600px] object-cover"
           />
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
@@ -86,12 +87,12 @@ const ProductDetail = () => {
 
             <div className="flex gap-4">
               <button
-                className="flex-1 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold"
-                onClick={() => handleAddToCart(product.id)}
-              >
+                className="bg-green-500 w-[20rem] px-4 py-2 rounded-lg"
+                onClick={() => handleAddToCart(product.id)}>
                 Add to Cart
               </button>
               < OrderComponent productId={product.id} totalAmount={product.price} />
+              < CreditReq productId={product.id} />
             </div>
           </div>
         </div>

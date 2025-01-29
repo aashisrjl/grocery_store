@@ -100,7 +100,7 @@ export function Orders() {
   return (
     <div className="py-8">
       <h2 className="text-2xl font-medium text-gray-900 mb-6">My Orders</h2>
-      <div className="space-y-6">
+      <div className="space-y-9">
         {orders.map((order) => (
           <div key={order.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="p-6">

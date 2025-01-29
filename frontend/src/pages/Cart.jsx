@@ -100,11 +100,11 @@ const Cart = () => {
 
   return (
     <>
-      <h1 className="text-3xl text-center font-bold text-green-500 mb-6">
+      <h1 className=" text-3xl text-center font-bold text-green-500 mb-6">
         Your Cart
       </h1>
-      <div className="overflow-x-auto w-[70rem]">
-        <table className="table-auto w-full bg-white rounded-lg shadow-lg">
+      <div className=" overflow-x-auto w-[90rem]">
+        <table className=" w-full bg-white rounded-lg shadow-lg">
           <thead>
             <tr className="bg-green-500 text-white">
             <th className="px-4 py-2 text-left">Image</th>

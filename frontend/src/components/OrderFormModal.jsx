@@ -12,7 +12,7 @@ const OrderFormModal = ({ onClose, onPlaceOrder, productId,totalAmount }) => {
     const orderData = {
       phoneNumber,
       shippingAddress,
-      totalAmount: parseFloat(totalAmount),
+      totalAmount: parseFloat(totalAmount * quantity),
       paymentMethod,
       items: [
         {

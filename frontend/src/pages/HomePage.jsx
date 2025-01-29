@@ -29,6 +29,7 @@ import OrderDetail from "./OrderDetail";
 import ProductDetail from "./ProductDetail";
 import Banner from "../components/Banner";
 import axios from "axios";
+import Credit from "./Credit";
 
 export function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -281,7 +282,7 @@ export function HomePage() {
           <Banner content="You'd get 50% off in upto Rs 2000 purchase" />
 
           {/* Routes */}
-          <main className="flex-1 mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="flex-1  px-4 sm:px-6 lg:px-8 py-8">
             <Routes>
               <Route
                 path="/"
@@ -342,7 +343,7 @@ export function HomePage() {
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/credits" element={"this is credit page"} />
+              <Route path="/credits" element={< Credit />} />
               <Route path="/orderdetail/:id" element={<OrderDetail />} />
               <Route path="/productdetail/:id" element={<ProductDetail />} />
             </Routes>
