@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Package, ArrowRight, Clock, CheckCircle, Truck } from "lucide-react";
+import { Package, ArrowRight, Clock, CheckCircle, Truck, XCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const getStatusIcon = (status) => {
@@ -10,6 +10,8 @@ const getStatusIcon = (status) => {
       return <Truck className="h-5 w-5 text-blue-500" />;
     case "delivered":
       return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "cancelled":
+      return <XCircle className="h-5 w-5 text-red-500" />;
     default:
       return <Clock className="h-5 w-5 text-gray-500" />;
   }
@@ -23,6 +25,8 @@ const getStatusText = (status) => {
       return "Shipped";
     case "delivered":
       return "Delivered";
+      case "cancelled":
+        return "cancelled";
     default:
       return "Unknown Status";
   }
@@ -36,19 +40,17 @@ export function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        // Retrieve token from cookies
         const token = document.cookie
           .split('; ')
           .find(row => row.startsWith('token='))
-          ?.split('=')[1]; // Extract token from cookie
+          ?.split('=')[1]; 
         
-        // If no token, handle authentication error (e.g., redirect to login)
+
         if (!token) {
-          navigate("/login")
-          return; // Optionally, redirect to login page
+          navigate("/login");
+          return; 
         }
 
-        // Send token with request in Authorization header
         const response = await fetch("http://localhost:3000/order", {
           method: "GET",
           headers: {

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
 import {
   ShoppingBag,
   Search,
@@ -19,7 +19,6 @@ import {
   LucideLogIn,
   LogOut,
 } from "lucide-react";
-import { categories, products } from "../data"; // Assuming 'categories' is a list of category names
 import { Favorites } from "./Favorites";
 import { Orders } from "./Orders";
 import SettingPage from "./Setting";
@@ -27,6 +26,7 @@ import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm";
 import Cart from "./Cart";
 import OrderDetail from "./OrderDetail";
+import ProductDetail from "./ProductDetail";
 import Banner from "../components/Banner";
 import axios from "axios";
 
@@ -35,11 +35,14 @@ export function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [showLogin, setShowLogin] = useState(true);
+  const [categories,setCategories] = useState([])
+  const [products,setProducts] = useState([])
+  console.log(products)
 
   const filteredProducts =
     selectedCategory === "All"
       ? products
-      : products.filter((product) => product.category === selectedCategory);
+      : products.filter((product) => product.CategoryDetails.categoryName === selectedCategory);
 
   const toggleFavorite = (productId) => {
     setFavorites((prev) =>
@@ -66,6 +69,65 @@ export function HomePage() {
       console.error("Logout failed:", error.message);
     }
   };
+  
+  const getCategory = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/category');
+      if (response.status === 200) {
+        setCategories(response.data.categories); // Access the categories array correctly
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const getProduct = async()=>{
+    try {
+      const response = await axios.get(`http://localhost:3000/product`);
+      if(response.status === 200){
+        setProducts(response.data.data)
+      }
+    } catch (error) {
+      console.log('error fetching product', error)
+      
+    }
+  }
+  useEffect(()=>{
+    getCategory();
+    getProduct();
+  },[]);
+
+  //add to cart
+  const handleAddToCart = async (productId) => {
+    try {
+      const token = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('token='))
+    ?.split('=')[1]; 
+  
+  if (!token) {
+    window.location.href='/login';
+    return; 
+  }
+
+      const response = await axios.post("http://localhost:3000/cart", {
+        productId: productId,
+        quantity: 1,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      
+      });
+      window.location.href='/cart';
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      alert("Failed to add product to cart.");
+    }
+  };
+
+  
   
 
   return (
@@ -174,8 +236,8 @@ export function HomePage() {
           >
             <option value="All">All Categories</option>
             {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
+              <option key={category.id} value={category.categoryName}>
+                {category.categoryName}
               </option>
             ))}
           </select>
@@ -219,7 +281,7 @@ export function HomePage() {
           <Banner content="You'd get 50% off in upto Rs 2000 purchase" />
 
           {/* Routes */}
-          <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="flex-1 mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Routes>
               <Route
                 path="/"
@@ -230,9 +292,10 @@ export function HomePage() {
                         key={product.id}
                         className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow relative group"
                       >
+                        <Link to={`productdetail/${product.id}`}>
                         <div className="aspect-w-1 aspect-h-1 relative">
                           <img
-                            src={product.image}
+                            src={`http://localhost:3000/${product.image}`}
                             alt={product.name}
                             className="w-full h-64 object-cover"
                           />
@@ -252,16 +315,18 @@ export function HomePage() {
                             />
                           </button>
                         </div>
+                        </Link>
                         <div className="p-4">
                           <h3 className="font-medium">{product.name}</h3>
                           <p className="text-sm text-gray-500">
-                            {product.category}
+                            {product.CategoryDetails.categoryName}
                           </p>
                           <div className="mt-2 flex justify-between items-center">
                             <p className="font-medium">
                               ${product.price}/{product.unit}
                             </p>
-                            <button className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm hover:bg-green-200">
+                            <button className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm hover:bg-green-200" 
+                             onClick={() => handleAddToCart(product.id)}>
                               Add to Cart
                             </button>
                           </div>
@@ -279,6 +344,7 @@ export function HomePage() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/credits" element={"this is credit page"} />
               <Route path="/orderdetail/:id" element={<OrderDetail />} />
+              <Route path="/productdetail/:id" element={<ProductDetail />} />
             </Routes>
           </main>
         </div>

@@ -34,7 +34,7 @@ export function Favorites({
           >
             <div className="aspect-w-1 aspect-h-1 relative">
               <img
-                src={product.image}
+                src={`http://localhost:3000/${product.image}`}
                 alt={product.name}
                 className="w-full h-64 object-cover"
               />

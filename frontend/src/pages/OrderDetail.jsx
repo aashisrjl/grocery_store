@@ -36,6 +36,33 @@ const OrderDetail = () => {
     fetchOrderDetails();
   }, [id]);
 
+  const handleCancelOrder = async (id) => {
+    const token = Cookies.get("token");
+  
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+  
+    try {
+      await axios.patch(
+        `http://localhost:3000/order-cancel/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Order canceled successfully.");
+      navigate(`/orderdetail/${id}`);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to cancel order.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -58,9 +85,9 @@ const OrderDetail = () => {
   const { payment, user } = order;
 
   return (
-    <div className="min-h-screen text-white flex flex-col items-center py-10">
+    <div className="h-24 min-h-screen text-white flex flex-col items-center py-10">
       <h1 className="text-3xl font-bold text-green-500 mb-6">Order Details</h1>
-      <div className="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6">
+      <div className="bg-white rounded-lg shadow-lg  w-full p-6">
         <div className="mb-4">
           <h2 className="text-xl font-bold text-black">
             Order ID: <span className="text-blue-500">{order.id}</span>
@@ -107,6 +134,9 @@ const OrderDetail = () => {
           <p className="text-black">Unit: {product.unit}</p>
           <p className="text-black">Price: ${parseFloat(product.price).toFixed(2)}</p>
         </div>
+      <button className="bg-red-600 px-2 py-2 mt-1 rounded float-end"
+      onClick={()=>{handleCancelOrder(order.id)}}
+      >Cancel Order</button>
       </div>
     </div>
   );
