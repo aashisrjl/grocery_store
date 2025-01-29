@@ -87,12 +87,14 @@ const ProductDetail = () => {
 
             <div className="flex gap-4">
               <button
-                className="bg-green-500 w-[20rem] px-4 py-2 rounded-lg"
+                className="bg-green-500 w-[20rem] px-4 py-2 rounded-lg mr-20"
                 onClick={() => handleAddToCart(product.id)}>
                 Add to Cart
               </button>
-              < OrderComponent productId={product.id} totalAmount={product.price} />
               < CreditReq productId={product.id} />
+              <div className="bg-blue-600 rounded-2xl px-24 float-end ml-auto">
+              < OrderComponent productId={product.id} totalAmount={product.price} />
+              </div>
             </div>
           </div>
         </div>

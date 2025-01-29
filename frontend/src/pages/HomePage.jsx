@@ -18,6 +18,13 @@ import {
   LogIn,
   LucideLogIn,
   LogOut,
+  CreditCard,
+  ShoppingCart,
+  MailIcon,
+  HelpCircle,
+  ContactIcon,
+  SubscriptIcon,
+  MailCheckIcon,
 } from "lucide-react";
 import { Favorites } from "./Favorites";
 import { Orders } from "./Orders";
@@ -30,6 +37,11 @@ import ProductDetail from "./ProductDetail";
 import Banner from "../components/Banner";
 import axios from "axios";
 import Credit from "./Credit";
+import Footer from "../components/Footer";
+import Contact from "./Contact";
+import FAQ from "./faq";
+import HelpSupport from "./Help";
+import AddProduct from "./AddProduct";
 
 export function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -164,6 +176,25 @@ export function HomePage() {
           <Home className="h-5 w-5" />
           <span>Home</span>
         </Link>
+           {/* Dropdown for Category */}
+           <div className="mt-10 p-3">
+          <label htmlFor="category" className="block text-gray-700">
+            Category
+          </label>
+          <select
+            id="category"
+            className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="All">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.categoryName}>
+                {category.categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
         <Link
           to="/favorites"
           className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
@@ -183,8 +214,46 @@ export function HomePage() {
           to="/credits"
           className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
         >
-          <ShoppingBasket className="h-5 w-5" />
+          <CreditCard className="h-5 w-5" />
           <span>Credits</span>
+        </Link>
+        <Link
+          to="/cart"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <ShoppingCart className="h-5 w-5" />
+          <span>Cart Item</span>
+        </Link>
+        <Link
+          to="/help"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <MailIcon className="h-5 w-5" />
+          <span>Help & Support</span>
+        </Link>
+
+        <Link
+          to="/faq"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <HelpCircle className="h-5 w-5" />
+          <span>FAQs</span>
+        </Link>
+
+        <Link
+          to="/contact"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <ContactIcon className="h-5 w-5" />
+          <span>Contact</span>
+        </Link>
+
+        <Link
+          to="/subscribe"
+          className="w-full flex items-center space-x-3 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100"
+        >
+          <MailCheckIcon className="h-5 w-5" />
+          <span>Subscribe</span>
         </Link>
 
         {/* Check if token exists */}
@@ -224,31 +293,12 @@ export function HomePage() {
           </>
         )}
 
-        {/* Dropdown for Category */}
-        <div className="mt-10 border-t-2 p-3">
-          <label htmlFor="category" className="block text-gray-700">
-            Category
-          </label>
-          <select
-            id="category"
-            className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="All">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.categoryName}>
-                {category.categoryName}
-              </option>
-            ))}
-          </select>
-        </div>
+     
       </div>
     </nav>
+  
   </div>
 </aside>
-
-
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-screen">
           <header className="bg-white shadow-sm">
@@ -280,6 +330,7 @@ export function HomePage() {
             </div>
           </header>
           <Banner content="You'd get 50% off in upto Rs 2000 purchase" />
+        
 
           {/* Routes */}
           <main className="flex-1  px-4 sm:px-6 lg:px-8 py-8">
@@ -337,6 +388,7 @@ export function HomePage() {
                   </div>
                 }
               />
+                
               <Route path="/favorites" element={<Favorites products={products} favorites={favorites} toggleFavorite={toggleFavorite}  />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/settings" element={<SettingPage />} />
@@ -344,10 +396,15 @@ export function HomePage() {
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/credits" element={< Credit />} />
+              <Route path="/contact" element={< Contact />} />
+              <Route path="/faq" element={< FAQ />} />
+              <Route path="/help" element={< HelpSupport />} />
+              <Route path="/addproduct" element={< AddProduct />} />
               <Route path="/orderdetail/:id" element={<OrderDetail />} />
               <Route path="/productdetail/:id" element={<ProductDetail />} />
             </Routes>
           </main>
+          < Footer />
         </div>
       </div>
     </Router>

@@ -46,7 +46,7 @@ const LoginForm = ({ switchToRegister }) => {
   return (
     <>
       <h1 className="text-3xl text-center font-bold text-green-500 mb-6">Login</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg text-black w-[400px]">
+      <form onSubmit={handleSubmit} className="m-auto mb-5   bg-white p-6 rounded-lg shadow-lg text-black w-[400px]">
         <div className="mb-4">
           <label htmlFor="email" className="block text-green-500 font-semibold mb-1">
             Email
