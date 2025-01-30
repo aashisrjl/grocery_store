@@ -64,7 +64,7 @@ export function Orders() {
         if (response.ok && data.orders) {
           setOrders(data.orders);
         } else {
-          alert("Error fetching orders: " + data.message || 'Unknown error');
+          console.log("no order found")
         }
       } catch (error) {
         console.error("Error fetching orders:", error);

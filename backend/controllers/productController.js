@@ -1,4 +1,4 @@
-const { product, category, Sequelize, users } = require('../models');
+const { product, category, Sequelize, users, cart, credit, order, payment, orderDetails } = require('../models');
 const { Op } = Sequelize;
 const fs = require("fs");
 
@@ -62,36 +62,50 @@ exports.getAllProduct = async(req,res)=>{
     }
 }
 
-exports.deleteProduct = async(req,res)=>{
-    const productId = req.params.id
-    const Isproduct = await product.findOne({
-        where:{
-            id:productId
-        }
-    })
-    if(Isproduct){
-        fs.unlink(`./uploads/${Isproduct.image}`,(err)=>{
+exports.deleteProduct = async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+    const productData = await product.findOne({ where: { id: productId } });
+
+    if (!productData) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    if(productData){
+        fs.unlink(`./uploads/${productData.image}`,(err)=>{
             if(err){
                 console.log(err)
                 }else{
                     console.log("Image Deleted")
                     }
         })
-        await product.destroy({
-            where:{
-                id:productId
-            }
-            })
-            res.status(200).json({
-                message:"Product deleted successfully"
-            })
-            }else{
-                res.status(404).json({
-                    message:"Product not found"
-                })
-            }
+    }
 
-}
+
+    await cart.destroy({ where: { productId } });
+    const orderDetailData = await orderDetails.findOne({ where: { productId } });
+
+    if (orderDetailData) {
+        const orderData = await order.findOne({where:{id:orderDetailData.orderId}})
+        await payment.destroy({ where: { id: orderData.paymentId } });
+        await order.destroy({ where: { id: orderDetailData.orderId } });
+    }
+    await orderDetails.destroy({where:{productId}})
+
+    await credit.destroy({ where: { productId } });
+
+    // Delete the product
+    await product.destroy({ where: { id: productId } });
+
+    res.status(200).json({ message: "Product deleted successfully" });
+
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "An error occurred while deleting the product" });
+  }
+};
+
 
 exports.getSingleProduct = async(req,res)=>{
     const productId = req.params.id;

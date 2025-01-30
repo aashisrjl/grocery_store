@@ -64,6 +64,7 @@ export function HomePage() {
         : [...prev, productId]
     );
   };
+  
 
   const handleLogout = async () => {
     try {
@@ -187,11 +188,12 @@ export function HomePage() {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
-            <option value="All">All Categories</option>
+            <option  value="All">All Categories</option>
             {categories.map((category) => (
-              <option key={category.id} value={category.categoryName}>
+                <option  key={category.id} value={category.categoryName}>
                 {category.categoryName}
               </option>
+                
             ))}
           </select>
         </div>

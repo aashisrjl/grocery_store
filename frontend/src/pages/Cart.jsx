@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import OrderComponent from "../components/OrderComponent";
+import { ShoppingBag } from "lucide-react";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -97,7 +98,17 @@ const Cart = () => {
   if (error) {
     return <div>{error}</div>;
   }
-
+  if (cartItems.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-4">
+        <ShoppingBag className="h-16 w-16 text-gray-300 mb-4" />
+        <h2 className="text-xl font-medium text-gray-900 mb-2">No carts yet</h2>
+        <p className="text-gray-500 text-center max-w-sm">
+          Start add product to see your cart here.
+        </p>
+      </div>
+    );
+  }
   return (
     <>
       <h1 className=" text-3xl text-center font-bold text-green-500 mb-6">
