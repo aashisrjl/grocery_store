@@ -291,7 +291,21 @@ exports.getProductByDesc = async(req,res)=>{
         message: "product fetched from description ",
         data
     })
-} 
+}
+
+exports.countProduct = async(req,res)=>{
+    const userId = req.userId;
+    const products = await product.findAll();
+   if(!userId){
+    return res.status(400).json({
+        message: "userId not found"
+    })
+   }
+   res.status(200).json({
+    message: "product count",
+    products: products.length
+   })
+}
 
 
 

@@ -36,7 +36,7 @@ const CreditReq = ({ productId }) => {
     <div className="">
       <button
         onClick={handleCreditReq}
-        className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-3 rounded-2xl font-semibold"
+        className=" text-black px-4 py-2 mr-5 rounded-2xl float-right mt-4 mb-4 bg-blue-300 hover:bg-blue-700 transition duration-300 ease-in-out"
       >
         Request Credit
       </button>

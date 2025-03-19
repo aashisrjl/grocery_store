@@ -4,7 +4,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/isAuthenticated');
 const { allowedTo } = require('../middleware/allowedTo');
 const { upload } = require('../middleware/multerConfig');
-const { addProduct, getAllProduct, getSingleProduct, deleteProduct, updateProduct, getProductByCategory, getProductsByName, getProductByCategoryName, getProductByRating, getProductByDesc } = require('../controllers/productController');
+const { addProduct, getAllProduct, getSingleProduct, deleteProduct, updateProduct, getProductByCategory, getProductsByName, getProductByCategoryName, getProductByRating, getProductByDesc, countProduct } = require('../controllers/productController');
 const { errorHandler } = require('../services/catchAsyncError');
 
 router.route("/product")
@@ -30,5 +30,7 @@ router.route("/product/rating/:rating")
 
 router.route("/product/desc/:desc")
 .get(errorHandler(getProductByDesc))
+
+router.route("/productCount").get(isAuthenticated,errorHandler(countProduct))
 
 module.exports = router;

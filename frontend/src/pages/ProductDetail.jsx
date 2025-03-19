@@ -70,6 +70,7 @@ const ProductDetail = () => {
             alt={product.name}
             className="w-full h-[600px] object-cover"
           />
+           < CreditReq productId={product.id} />
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -91,11 +92,11 @@ const ProductDetail = () => {
                 onClick={() => handleAddToCart(product.id)}>
                 Add to Cart
               </button>
-              < CreditReq productId={product.id} />
-              <div className="bg-blue-600 rounded-2xl px-24 float-end ml-auto">
+              <div className="bg-blue-600 rounded-2xl px-24 float-end ml-auto ">
               < OrderComponent productId={product.id} totalAmount={product.price} />
               </div>
             </div>
+             
           </div>
         </div>
       )}

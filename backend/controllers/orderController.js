@@ -395,3 +395,100 @@ exports.getOrderDetailById = async (req, res) => {
         orderDetailsData
     });
 };
+
+exports.countOrder = async(req,res)=>{
+    const userId = req.userId;
+    const orders = await order.findAll();
+   if(!userId){
+    return res.status(400).json({
+        message: "userId not found"
+    })
+   }
+   res.status(200).json({
+    message: "order count",
+    orders: orders.length
+   })
+}
+
+exports.countPayment = async(req,res)=>{
+    const userId = req.userId;
+    const payments = await payment.findAll();
+   if(!userId){
+    return res.status(400).json({
+        message: "userId not found"
+    })
+   }
+   res.status(200).json({
+    message: "payment count",
+    payment: payments.length
+   })
+}
+
+exports.getPaginationOrder = async (req, res) => {
+    const userId = req?.userId;
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const perPage = parseInt(req.query.perPage) || 5; // Default to 5 orders per page
+    const offset = (page - 1) * perPage; // Calculate offset
+
+        const { count, rows } = await order.findAndCountAll({
+            
+            include: [
+                {
+                    model: users,
+                    attributes: ["username", "email", "role"]
+                },
+                {
+                    model: payment,
+                    attributes: ["paymentMethod", "paymentStatus"]
+                }
+            ],
+            limit: perPage,
+            offset: offset
+        });
+
+        if (count === 0) {
+            return res.status(404).json({
+                message: "No orders found"
+            });
+        }
+
+        const totalPages = Math.ceil(count / perPage);
+
+        res.status(200).json({
+            message: "Orders found",
+            orders: rows,
+            pagination: {
+                currentPage: page,
+                perPage: perPage,
+                totalOrders: count,
+                totalPages: totalPages,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1
+            }
+        });
+};
+
+exports.getAllOrders = async (req, res) => {
+    const orders = await order.findAll({
+        include: [
+            {
+                model: users,
+                attributes: ["username", "email", "role"]
+            },
+            {
+                model: payment,
+                attributes: ["paymentMethod", "paymentStatus"]
+            }
+        ]
+    });
+    if (orders.length == 0) {
+        return res.status(404).json({
+            message: "No orders found"
+        });
+    }
+
+    res.status(200).json({
+        message: "Orders found",
+        orders
+    });
+}

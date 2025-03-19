@@ -74,8 +74,8 @@ const Credit = () => {
                 alt={request.product?.name}
                 className="w-full h-60 object-cover rounded-md mt-4"
               />
-              <p className="mt-4">
-                <span className="font-semibold">Price:</span> Rs. {request.price}
+              <p className="mt-4 text-green-500 font-bold">
+                <span className="font-semibold ">Price:</span> $. {request.price}
               </p>
               <p>
                 <span className="font-bold">Status:</span> {request.status}
