@@ -7,6 +7,8 @@ import Orders from './pages/Orders';
 import Customers from './pages/Customers';
 import Credits from './pages/Credits';
 import AddProduct from './components/AddProduct';
+import ProductDetail from './components/productDetail';
+import EditProduct from './components/editProduct';
 
 function App() {
   return (
@@ -15,7 +17,7 @@ function App() {
         <div>
         <Sidebar />
         </div>
-        <div className=" p-8 ml-auto w-[83%]">
+        <div className=" p-8 ml-auto w-[85%]">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/products" element={<Products />} />
@@ -23,6 +25,8 @@ function App() {
             <Route path="/customers" element={<Customers />} />
             <Route path="/credits" element={<Credits />} />
             <Route path="/addproduct" element={<AddProduct />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/editproduct/:id" element={<EditProduct />} />
           </Routes>
         </div>
       </div>
